@@ -16,6 +16,32 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.2); }
         }
+        .add-to-cart-animation {
+            animation: addToCartPulse 0.4s ease-in-out;
+        }
+        @keyframes addToCartPulse {
+            0% { transform: scale(1); }
+            25% { transform: scale(0.95); background-color: #f59e0b; }
+            50% { transform: scale(1.05); background-color: #10b981; }
+            75% { transform: scale(0.98); background-color: #10b981; }
+            100% { transform: scale(1); background-color: #eab308; }
+        }
+        .plus-animation {
+            animation: plusPulse 0.3s ease-in-out;
+        }
+        @keyframes plusPulse {
+            0% { transform: scale(1); background-color: #e5e7eb; }
+            50% { transform: scale(1.1); background-color: #10b981; color: white; }
+            100% { transform: scale(1); background-color: #e5e7eb; color: black; }
+        }
+        .minus-animation {
+            animation: minusPulse 0.3s ease-in-out;
+        }
+        @keyframes minusPulse {
+            0% { transform: scale(1); background-color: #e5e7eb; }
+            50% { transform: scale(1.1); background-color: #ef4444; color: white; }
+            100% { transform: scale(1); background-color: #e5e7eb; color: black; }
+        }
         .product-card:hover {
             transform: translateY(-2px);
             transition: transform 0.2s ease-in-out;
@@ -43,6 +69,11 @@
                         <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold cart-badge">0</span>
                     </button>
                 </div>
+            </div>
+            
+            <!-- Barra de Busca -->
+            <div class="mt-2 pt-2 border-t border-gray-200">
+                <input type="text" id="search-input" placeholder="🔍 Buscar produtos..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-lg" onkeyup="searchProducts()">
             </div>
         </div>
     </header>
@@ -75,9 +106,6 @@
 
         <!-- Produtos -->
         <div>
-                <div class="mb-6">
-                    <input type="text" id="search-input" placeholder="Buscar produtos..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent" onkeyup="searchProducts()">
-                </div>
                 
                 <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     <!-- Produtos serão inseridos aqui pelo JavaScript -->
@@ -213,21 +241,16 @@ FITA ISOLANTE	8.90	eletrica
         const products = [
             // MATERIAIS BÁSICOS DE CONSTRUÇÃO
             {id: 29, name: "AREIA", price: 135.00, category: "alvenaria"},
-            {id: 30, name: "AREIA SACO 20KL", price: 7.50, category: "alvenaria"},
             {id: 155, name: "PEDRA 1", price: 160.00, category: "alvenaria"},
-            {id: 156, name: "PEDRA SACO 25KG", price: 12.00, category: "alvenaria"},
-            {id: 548, name: "PEDRA SACO 20KL", price: 8.50, category: "alvenaria"},
-            {id: 282, name: "CP2 CSN", price: 36.00, category: "alvenaria"},
-            {id: 283, name: "CP2 MAUA 25KG", price: 21.00, category: "alvenaria"},
-            {id: 284, name: "CP2 TUPI", price: 36.00, category: "alvenaria"},
-            {id: 285, name: "CP3 CSN", price: 32.00, category: "alvenaria"},
+            {id: 282, name: "CP2", price: 36.00, category: "alvenaria"},
+            {id: 285, name: "CP3", price: 32.00, category: "alvenaria"},
             {id: 253, name: "CIMENTO VAREJO", price: 7.00, category: "alvenaria"},
             {id: 254, name: "CIMENTO BRANCO", price: 7.00, category: "alvenaria"},
             {id: 751, name: "TIJOLO 20*20 VAREJO", price: 1.00, category: "alvenaria"},
             {id: 752, name: "TIJOLO 20*20 MILHEIRO", price: 0.90, category: "alvenaria"},
             {id: 753, name: "TIJOLO 30*20 MILHEIRO", price: 1.30, category: "alvenaria"},
             {id: 754, name: "TIJOLO 30*20 VAREJO", price: 1.40, category: "alvenaria"},
-            {id: 755, name: "TIJOLO LAJE", price: 1.80, category: "alvenaria"},
+          
             {id: 756, name: "TIJOLO MACICO", price: 2.60, category: "alvenaria"},
             {id: 340, name: "EXTRAFILITO", price: 8.50, category: "tubos"},
             {id: 38, name: "ARGILA 18KL", price: 8.50, category: "alvenaria"},
@@ -246,7 +269,7 @@ FITA ISOLANTE	8.90	eletrica
             {id: 348, name: "FERRO 3/8", price: 55.00, category: "alvenaria"},
             
             // OUTROS PRODUTOS EM ORDEM ALFABÉTICA
-            {id: 157, name: "ABAFADOR DE RUIDO", price: 22.00, category: "outros"},
+            
             {id: 11, name: "ABRACADEIRA 1/2", price: 4.00, category: "tubos"},
             {id: 12, name: "ABRACADEIRA 3/4", price: 4.00, category: "tubos"},
             {id: 13, name: "ABRACADEIRA U 1/2", price: 3.00, category: "tubos"},
@@ -273,12 +296,9 @@ FITA ISOLANTE	8.90	eletrica
             {id: 168, name: "ARCO DE SERRA MAX", price: 22.00, category: "outros"},
             {id: 169, name: "ARCO SERRA FERRO", price: 40.00, category: "outros"},
             {id: 31, name: "ARGAMASSA AC1 CONSTRUCOLA", price: 14.00, category: "alvenaria"},
-            {id: 32, name: "ARGAMASSA AC1 MASSA PURA", price: 13.00, category: "alvenaria"},
-            {id: 33, name: "ARGAMASSA AC2 MASSA PURA", price: 18.00, category: "alvenaria"},
-            {id: 34, name: "ARGAMASSA AC3 MASSA PURA", price: 25.00, category: "alvenaria"},
             {id: 35, name: "ARGAMASSA ARGAMIL AC1", price: 15.00, category: "alvenaria"},
             {id: 36, name: "ARGAMASSA ARGAMIL AC2", price: 24.00, category: "alvenaria"},
-            {id: 37, name: "ARGAMASSA ARGAMIL PORCELAN", price: 33.00, category: "alvenaria"},
+          
             {id: 170, name: "ARMARIO BRANCO DUAL", price: 49.90, category: "tubos"},
             {id: 171, name: "ASSENTO ALMOFADADO HERC PRIME", price: 55.00, category: "tubos"},
             {id: 172, name: "ASSENTO SANITARIO", price: 28.00, category: "tubos"},
@@ -288,20 +308,20 @@ FITA ISOLANTE	8.90	eletrica
             {id: 47, name: "BALDE PINTURA 10L ROMA", price: 32.00, category: "pintura"},
             {id: 48, name: "BANDEJA P/TINTA G", price: 13.00, category: "pintura"},
             {id: 49, name: "BANDEJA P/TINTA P", price: 8.00, category: "pintura"},
-            {id: 176, name: "BELFILITO", price: 7.00, category: "tubos"},
+            
             {id: 2, name: "BENJAMIN", price: 9.00, category: "eletrica"},
-            {id: 3, name: "BENJAMIN 3 SAIDA", price: 9.00, category: "eletrica"},
+            
             {id: 177, name: "BICA JARDIM PRETA", price: 6.00, category: "tubos"},
-            {id: 178, name: "BICO DE PATO", price: 4.00, category: "tubos"},
+            
             {id: 39, name: "BLOCO 10", price: 3.20, category: "alvenaria"},
             {id: 40, name: "BLOCO 14", price: 3.90, category: "alvenaria"},
             {id: 41, name: "BLOCO ESPUMA", price: 8.00, category: "alvenaria"},
-            {id: 4, name: "BOCAL C/ PLUG MACHO", price: 8.00, category: "eletrica"},
+          
             {id: 5, name: "BOCAL C/ RABICHO", price: 7.00, category: "eletrica"},
             {id: 22, name: "BOIA P/ CAIXA D AGUA 1/2", price: 16.00, category: "tubos"},
-            {id: 23, name: "BOIA P/ CAIXA D AGUA 1/2*3/4", price: 18.00, category: "tubos"},
+        
             {id: 24, name: "BOIA P/ CAIXA D AGUA 3/4", price: 18.00, category: "tubos"},
-            {id: 179, name: "BOIA P/CAIXA ACLOPADA", price: 12.00, category: "tubos"},
+       
             {id: 180, name: "BOIA PELICANO P/C.X AGUA", price: 16.00, category: "tubos"},
             {id: 181, name: "BORRACHA NIVEL METRO", price: 2.50, category: "alvenaria"},
             {id: 182, name: "BROCA ACO 1/2", price: 21.00, category: "outros"},
@@ -320,9 +340,9 @@ FITA ISOLANTE	8.90	eletrica
             {id: 191, name: "CABO P/ ENXADA", price: 25.00, category: "outros"},
             {id: 192, name: "CABO P/ PA METALICO", price: 29.00, category: "outros"},
             {id: 50, name: "CABO P/ROLO", price: 9.90, category: "pintura"},
-            {id: 193, name: "CADEADO 20MM", price: 19.00, category: "outros"},
+           
             {id: 194, name: "CADEADO 30MM", price: 25.00, category: "outros"},
-            {id: 195, name: "CADEADO 40MM", price: 33.00, category: "outros"},
+           
             {id: 43, name: "CAIBRO O METRO ENTREGA", price: 12.00, category: "alvenaria"},
             {id: 44, name: "CAIBRO O METRO RETIRADA", price: 7.50, category: "alvenaria"},
             {id: 6, name: "CAIXA 3*3 REDONDA", price: 3.00, category: "eletrica"},
@@ -330,7 +350,7 @@ FITA ISOLANTE	8.90	eletrica
             {id: 8, name: "CAIXA 4*4", price: 3.00, category: "eletrica"},
             {id: 196, name: "CAIXA D´ AGUA 1000L", price: 395.00, category: "tubos"},
             {id: 197, name: "CAIXA D´ AGUA 500LT", price: 295.00, category: "tubos"},
-            {id: 198, name: "CAIXA DE CORREIO", price: 29.00, category: "alvenaria"},
+           
             {id: 199, name: "CAIXA DE DESCARGA METASUL", price: 42.00, category: "tubos"},
             {id: 200, name: "CAIXA DE ESGOTO", price: 85.00, category: "tubos"},
             {id: 201, name: "CAIXA DE LAJE", price: 5.00, category: "alvenaria"},
@@ -350,11 +370,8 @@ FITA ISOLANTE	8.90	eletrica
             {id: 213, name: "CAIXONETE AR 7500", price: 40.00, category: "alvenaria"},
             {id: 214, name: "CAIXONETE EUCALIPTO PORTA 60/70/80", price: 195.00, category: "alvenaria"},
             {id: 215, name: "CAIXONETE PINUS PORTA 60/70/80", price: 135.00, category: "alvenaria"},
-            {id: 42, name: "CAL 7KILO", price: 21.00, category: "alvenaria"},
+            
             {id: 216, name: "CAMARA P/CARINHO DE MAO", price: 28.00, category: "outros"},
-            {id: 217, name: "CAMINHÃO AREIA 14MT", price: 1350.00, category: "outros"},
-            {id: 218, name: "CAMINHAO AREIA 7MT", price: 790.00, category: "outros"},
-            {id: 219, name: "CAMINHAO PEDRA 1 7MT", price: 890.00, category: "outros"},
             {id: 220, name: "CANTONEIRA 20CM", price: 11.00, category: "alvenaria"},
             {id: 221, name: "CANTONEIRA 30CM", price: 14.00, category: "alvenaria"},
             {id: 222, name: "CAP 50", price: 8.00, category: "tubos"},
@@ -375,19 +392,13 @@ FITA ISOLANTE	8.90	eletrica
             {id: 237, name: "CAVADEIRA ARTICULADA MAX 1,", price: 59.00, category: "outros"},
             {id: 238, name: "CAVADEIRA FERRO FRIZADA", price: 99.00, category: "outros"},
             {id: 239, name: "CAVADEIRA FERRO FRIZADA GRO", price: 110.00, category: "outros"},
-            {id: 240, name: "CHAVE DE FENDA 1/4", price: 14.00, category: "outros"},
-            {id: 241, name: "CHAVE DE FENDA 5/16", price: 16.00, category: "outros"},
-            {id: 242, name: "CHAVE PHILIPS 1/4", price: 14.00, category: "outros"},
-            {id: 243, name: "CHAVE PHILIPS 5/16", price: 16.00, category: "outros"},
+           
             {id: 244, name: "CHAVE TESTE", price: 8.00, category: "eletrica"},
-            {id: 245, name: "CHURRASQUEIRA ALUMINIO GRAN", price: 380.00, category: "outros"},
-            {id: 246, name: "CHURRASQUEIRA ALUMINIO MEDI", price: 350.00, category: "outros"},
-            {id: 247, name: "CHURRASQUEIRA P", price: 190.00, category: "outros"},
-            {id: 248, name: "CHUVEIRAO PVC", price: 23.00, category: "tubos"},
+           
             {id: 249, name: "CHUVEIRO ELETRICO ENERDUCHA", price: 59.00, category: "eletrica"},
             {id: 250, name: "CHUVEIRO PVC BRANCO S/REGIST", price: 18.00, category: "tubos"},
             {id: 251, name: "CHUVEIRO PVC CROMADO S/REGI", price: 39.00, category: "tubos"},
-            {id: 252, name: "CHUVERIO ELETRIO ENERDUCHA", price: 58.00, category: "eletrica"},
+           
             {id: 255, name: "COLA ADESIVA 17G", price: 4.00, category: "outros"},
             {id: 256, name: "COLA ADESIVA 75G", price: 9.00, category: "outros"},
             {id: 257, name: "COLA ADESIVA 850G", price: 48.00, category: "outros"},
@@ -399,27 +410,25 @@ FITA ISOLANTE	8.90	eletrica
             {id: 263, name: "COLHER DE PEDREIRO N* 8", price: 23.00, category: "outros"},
             {id: 264, name: "COLHER DE PEDREIRO N*7", price: 22.00, category: "outros"},
             {id: 265, name: "COLHER DE PEDREIRO N*9", price: 24.00, category: "outros"},
-            {id: 266, name: "COLORGIN GET FOSCO", price: 19.00, category: "pintura"},
+           
             {id: 267, name: "COLUNA 1/4 3MT", price: 30.00, category: "alvenaria"},
             {id: 268, name: "COLUNA 1/4 6MT", price: 58.00, category: "alvenaria"},
             {id: 269, name: "COLUNA 3/8 6MT", price: 124.00, category: "alvenaria"},
             {id: 270, name: "COLUNA 5/16 3MT", price: 40.00, category: "alvenaria"},
             {id: 271, name: "COLUNA 5/16 6MT", price: 78.00, category: "alvenaria"},
-            {id: 272, name: "CONCRETO BOMBEADO", price: 0.10, category: "alvenaria"},
+           
             {id: 273, name: "CONDUIT 1 POLEGADA", price: 95.00, category: "eletrica"},
             {id: 274, name: "CONDUIT 1/2 DUEL 50MT", price: 55.00, category: "eletrica"},
-            {id: 275, name: "CONDUIT 3/4 DUEL 25MT", price: 40.00, category: "eletrica"},
+           
             {id: 276, name: "CONDUIT 3/4 DUEL 50MT", price: 55.00, category: "eletrica"},
             {id: 277, name: "CONDUIT 3/4 TIGRE REFORCADO 5", price: 70.00, category: "eletrica"},
             {id: 278, name: "CONDUIT METRO", price: 2.00, category: "eletrica"},
-            {id: 279, name: "CONECTOR CHUVEIRO", price: 6.00, category: "tubos"},
+            
             {id: 1, name: "CONECTOR PIRANHA 1,5-10MM", price: 19.00, category: "eletrica"},
             {id: 280, name: "CONECTOR PIRANHA 4-35MM", price: 25.00, category: "eletrica"},
             {id: 281, name: "CORANTE", price: 7.00, category: "pintura"},
-            {id: 282, name: "CP2 CSN", price: 36.00, category: "alvenaria"},
-            {id: 283, name: "CP2 MAUA 25KG", price: 21.00, category: "alvenaria"},
-            {id: 284, name: "CP2 TUPI", price: 36.00, category: "alvenaria"},
-            {id: 285, name: "CP3 CSN", price: 32.00, category: "alvenaria"},
+            {id: 282, name: "CP2", price: 36.00, category: "alvenaria"},
+            {id: 285, name: "CP3", price: 32.00, category: "alvenaria"},
             {id: 286, name: "CUMIEIRA", price: 5.00, category: "alvenaria"},
             {id: 287, name: "CURVA 100 CURTA PLASTUBOS", price: 22.00, category: "tubos"},
             {id: 288, name: "CURVA 20", price: 4.00, category: "tubos"},
@@ -455,7 +464,7 @@ FITA ISOLANTE	8.90	eletrica
             {id: 318, name: "DUREPOXI 100G", price: 14.00, category: "alvenaria"},
             {id: 319, name: "DUREPOXI 50G", price: 9.00, category: "alvenaria"},
             {id: 320, name: "ENXADA COMPLETA 1,30MT", price: 58.00, category: "outros"},
-            {id: 321, name: "ENXADA S/ CABO", price: 39.00, category: "outros"},
+           
             {id: 322, name: "ESCADA ALUMINIO 4 DEGRAUS", price: 170.00, category: "outros"},
             {id: 323, name: "ESCADA ALUMINIO 5 DEGRAUS", price: 185.00, category: "outros"},
             {id: 324, name: "ESCADA ALUMINIO 6 DEGRAUS", price: 210.00, category: "outros"},
@@ -476,8 +485,7 @@ FITA ISOLANTE	8.90	eletrica
             {id: 339, name: "EXTENSAO 3 MT", price: 28.00, category: "eletrica"},
             {id: 340, name: "EXTRAFILITO", price: 8.50, category: "tubos"},
             {id: 341, name: "FECHADURA SILVANA PORTAO SO", price: 55.00, category: "outros"},
-            {id: 342, name: "FECHADURA STAM PORTA ALUMI", price: 60.00, category: "outros"},
-            {id: 343, name: "FECHADURA STAM PORTA DE FE", price: 60.00, category: "outros"},
+           
             {id: 344, name: "FECHADURA STAM PORTA MADE", price: 65.00, category: "outros"},
             {id: 345, name: "FECHADURA STAM PORTAO DE FE", price: 65.00, category: "outros"},
             {id: 346, name: "FERRO 1/4", price: 26.00, category: "alvenaria"},
@@ -510,8 +518,7 @@ FITA ISOLANTE	8.90	eletrica
             {id: 373, name: "FRANGE 50", price: 33.00, category: "tubos"},
             {id: 374, name: "FRETE LAJES FORTES", price: 0.00, category: "alvenaria"},
             {id: 375, name: "GESSO", price: 7.00, category: "alvenaria"},
-            {id: 376, name: "GRAMPO", price: 1.50, category: "alvenaria"},
-            {id: 377, name: "GRAMPO CAIXA C/40 UND", price: 50.00, category: "alvenaria"},
+           
             {id: 378, name: "GRELHA INOX 10*10", price: 12.00, category: "tubos"},
             {id: 379, name: "GRELHA INOX 15*15", price: 22.00, category: "tubos"},
             {id: 380, name: "HASTER 30CM", price: 3.50, category: "alvenaria"},
@@ -532,8 +539,7 @@ FITA ISOLANTE	8.90	eletrica
             {id: 395, name: "INTERRUPTOR TRES SECAO", price: 24.00, category: "eletrica"},
             {id: 396, name: "IPERMEABIIZANTE VEDA", price: 40.00, category: "alvenaria"},
             {id: 397, name: "ISOPOR LAJE 25CM", price: 8.00, category: "alvenaria"},
-            {id: 398, name: "JANELA 0,60X0,60 ALUMINIO", price: 190.00, category: "alvenaria"},
-            {id: 399, name: "JANELA 1,00X1,00 ALUMINIO", price: 195.00, category: "alvenaria"},
+           
             {id: 400, name: "JOELHO 1/2", price: 2.00, category: "tubos"},
             {id: 401, name: "JOELHO 1/2 45*", price: 2.00, category: "tubos"},
             {id: 402, name: "JOELHO 100", price: 9.00, category: "tubos"},
@@ -574,13 +580,12 @@ FITA ISOLANTE	8.90	eletrica
             {id: 437, name: "JUNCAO 75", price: 16.00, category: "tubos"},
             {id: 438, name: "KIT 3 TRICHA", price: 14.00, category: "pintura"},
             {id: 439, name: "KIT PINTURA 3 PCS", price: 26.00, category: "pintura"},
-            {id: 440, name: "LAJE ISOPOR", price: 43.00, category: "alvenaria"},
-            {id: 441, name: "LAJE TIJOLO", price: 47.00, category: "alvenaria"},
+           
             {id: 442, name: "LAMPADA", price: 8.00, category: "eletrica"},
             {id: 443, name: "LAPIS CARPINTEIRO", price: 4.00, category: "alvenaria"},
             {id: 444, name: "LAVATORIO PVC HERC", price: 28.00, category: "tubos"},
-            {id: 445, name: "LIGAMIL", price: 12.50, category: "alvenaria"},
-            {id: 446, name: "LIMPA PISO", price: 14.00, category: "pintura"},
+           
+            
             {id: 447, name: "LINHA PEDREIRO", price: 8.00, category: "alvenaria"},
             {id: 448, name: "LIXA D/AGUA", price: 4.00, category: "pintura"},
             {id: 449, name: "LIXA FERRO", price: 6.00, category: "pintura"},
@@ -615,9 +620,6 @@ FITA ISOLANTE	8.90	eletrica
             {id: 478, name: "LUVA PU PRETA", price: 13.00, category: "alvenaria"},
             {id: 479, name: "LUVA REDUCAO 25*20", price: 3.50, category: "tubos"},
             {id: 480, name: "MALHA 3.4 POP", price: 55.00, category: "alvenaria"},
-            {id: 481, name: "MANGUEIRA CRISTAL 3/4", price: 6.00, category: "tubos"},
-            {id: 482, name: "MANGUEIRA NIVEL METRO", price: 2.50, category: "alvenaria"},
-            {id: 483, name: "MANGUEIRA P/MAQUINA", price: 18.00, category: "alvenaria"},
             {id: 484, name: "MANGUEIRA P/REGULADOR DE GA", price: 16.00, category: "alvenaria"},
             {id: 485, name: "MANTA 10CM", price: 49.90, category: "alvenaria"},
             {id: 486, name: "MANTA 10CM METRO", price: 6.00, category: "alvenaria"},
@@ -648,7 +650,7 @@ FITA ISOLANTE	8.90	eletrica
             {id: 511, name: "NIVELADOR DE PISO CUNHA C/ 5", price: 19.00, category: "alvenaria"},
             {id: 512, name: "NIVELADOR PISO 1,00M C/ 50 U", price: 14.00, category: "alvenaria"},
             {id: 513, name: "NIVELADOR PISO 1,5M C/50 UNI", price: 14.00, category: "alvenaria"},
-            {id: 514, name: "NUMERO ENCARTELADO", price: 7.50, category: "alvenaria"},
+            
             {id: 515, name: "OCULOS SEGURANÇA", price: 12.00, category: "alvenaria"},
             {id: 516, name: "PA BICO N3", price: 49.90, category: "alvenaria"},
             {id: 517, name: "PA QUADRADA N.3", price: 46.00, category: "alvenaria"},
@@ -683,8 +685,7 @@ FITA ISOLANTE	8.90	eletrica
             {id: 545, name: "PEDRA MARMORE PRETA 1,25", price: 75.00, category: "alvenaria"},
             {id: 546, name: "PEDRA MARMORE PRETA 1,55", price: 95.00, category: "alvenaria"},
             {id: 547, name: "PEDRA MARMORE PRETO 2,05", price: 110.00, category: "alvenaria"},
-            {id: 548, name: "PEDRA SACO 20KL", price: 8.50, category: "alvenaria"},
-            {id: 156, name: "PEDRA SACO 25KG", price: 12.00, category: "alvenaria"},
+           
             {id: 549, name: "PENEIRA ARROZ", price: 28.00, category: "alvenaria"},
             {id: 550, name: "PENEIRA FEIJAO", price: 28.00, category: "alvenaria"},
             {id: 551, name: "PERNA O METRO", price: 19.00, category: "alvenaria"},
@@ -692,47 +693,13 @@ FITA ISOLANTE	8.90	eletrica
             {id: 553, name: "PIA 1,00X50", price: 175.00, category: "tubos"},
             {id: 554, name: "PIA 1,20X50", price: 195.00, category: "tubos"},
             {id: 555, name: "PINO MACHO 10A 2 PONTO", price: 6.00, category: "eletrica"},
-            {id: 556, name: "PINO MACHO 20A PONTO", price: 8.00, category: "eletrica"},
-            {id: 557, name: "PISO CERAL ALABASTRO CX C/2,2", price: 62.15, category: "alvenaria"},
-            {id: 558, name: "PISO CERAL ALABASTRO CX C/2,6", price: 71.55, category: "alvenaria"},
-            {id: 559, name: "PISO CERAL HARMONY CX C/2,20", price: 59.40, category: "alvenaria"},
-            {id: 560, name: "PISO CERAL HARMONY CX C/2,65", price: 74.20, category: "alvenaria"},
-            {id: 561, name: "PISO CERAL IZABELA CX C/2,65", price: 74.20, category: "alvenaria"},
-            {id: 562, name: "PISO CRISTOFOLETTI 56098 CX C/", price: 64.90, category: "alvenaria"},
-            {id: 563, name: "PISO CRISTOFOLETTI 56112 CX C/", price: 67.10, category: "alvenaria"},
-            {id: 564, name: "PISO FORMIGRES AGATA CX C/2,", price: 70.00, category: "alvenaria"},
-            {id: 565, name: "PISO FORMIGRES AVILARBE CX C/", price: 60.90, category: "alvenaria"},
-            {id: 566, name: "PISO FORMIGRES AVILARBR CX C/2", price: 60.90, category: "alvenaria"},
-            {id: 567, name: "PISO FORMIGRES ECOLOGIC CX C/", price: 64.65, category: "alvenaria"},
-            {id: 568, name: "PISO FORMIGRES MARMOREBR C", price: 58.80, category: "alvenaria"},
-            {id: 569, name: "PISO FORMIGRES MARMORECZ C", price: 58.80, category: "alvenaria"},
-            {id: 570, name: "PISO FORMIGRES MONTBEIGE CX", price: 58.80, category: "alvenaria"},
-            {id: 571, name: "PISO FORMIGRESFERRETE CX C/2,", price: 62.45, category: "alvenaria"},
-            {id: 572, name: "PISO FORMIGRESMARMORE CX C/", price: 56.70, category: "alvenaria"},
-            {id: 573, name: "PISO FORMIGRESPRIMUSPOL CX C", price: 96.50, category: "alvenaria"},
-            {id: 574, name: "PISO FORMIGRESTREVISO CX C/2,", price: 56.00, category: "alvenaria"},
-            {id: 575, name: "PISO IDEALLE BERLIMPLUS CX C/2", price: 58.00, category: "alvenaria"},
-            {id: 576, name: "PISO IDEALLE BREDA CX C/2,20", price: 103.40, category: "alvenaria"},
-            {id: 577, name: "PISO IDEALLE CAMEROTTA CX C/2", price: 60.00, category: "alvenaria"},
-            {id: 578, name: "PISO IDEALLE CHICAGO CX C/2,3", price: 69.60, category: "alvenaria"},
-            {id: 579, name: "PISO IDEALLE CLEANPLUS CX C/2,", price: 56.00, category: "alvenaria"},
-            {id: 580, name: "PISO IDEALLE ITALIA CXC 2,03", price: 60.90, category: "alvenaria"},
-            {id: 581, name: "PISO INCEFRA 52680 CX C/1,93", price: 69.50, category: "alvenaria"},
-            {id: 582, name: "PISO INCEFRA 52720 CX C/1,93", price: 69.50, category: "alvenaria"},
-            {id: 583, name: "PISO ROCHFORTE DAMASCO CX C", price: 143.10, category: "alvenaria"},
-            {id: 584, name: "PISO STAR GOLDEN FERRETE CX 2,", price: 64.65, category: "alvenaria"},
-            {id: 585, name: "PISO STAR GOLDEN MONT BEIGE", price: 58.80, category: "alvenaria"},
-            {id: 586, name: "PISO VIVA 58000 CX C/2,35", price: 54.00, category: "alvenaria"},
-            {id: 587, name: "PISO VIVA 58004 CX C/2,35", price: 54.00, category: "alvenaria"},
-            {id: 588, name: "PISO VIVA 58551 CX C/2,35", price: 65.80, category: "alvenaria"},
-            {id: 589, name: "PISO VIVA 58552 CX C/2,35", price: 65.80, category: "alvenaria"},
-            {id: 590, name: "PISO VIVA 7202 CX C/1,80", price: 54.00, category: "alvenaria"},
+          
             {id: 591, name: "PLAFONIER", price: 10.00, category: "eletrica"},
             {id: 592, name: "PLUG 1/2", price: 2.00, category: "tubos"},
             {id: 593, name: "PLUG 3/4", price: 3.00, category: "tubos"},
             {id: 594, name: "PNEU CARRINHO COMPLETO", price: 60.00, category: "alvenaria"},
             {id: 595, name: "PNEU CARRINHO MAO", price: 28.00, category: "alvenaria"},
-            {id: 596, name: "PONTEIRO", price: 18.00, category: "alvenaria"},
+           
             {id: 597, name: "PORTA COMPLETA 60", price: 380.00, category: "alvenaria"},
             {id: 598, name: "PORTA COMPLETA 70", price: 395.00, category: "alvenaria"},
             {id: 599, name: "PORTA COMPLETA 80", price: 410.00, category: "alvenaria"},
@@ -812,7 +779,6 @@ FITA ISOLANTE	8.90	eletrica
             {id: 673, name: "SACO AREIA", price: 2.00, category: "alvenaria"},
             {id: 674, name: "SACO DE ENTULHO PRETO", price: 2.00, category: "alvenaria"},
             {id: 675, name: "SACO PEDRA 1", price: 3.00, category: "alvenaria"},
-            {id: 676, name: "SACO PEDRA 20 KL", price: 8.50, category: "alvenaria"},
             {id: 677, name: "SACO PRETO", price: 1.50, category: "alvenaria"},
             {id: 678, name: "SACO RAFIA BRANCO", price: 2.50, category: "alvenaria"},
             {id: 679, name: "SARRAFO 10", price: 14.00, category: "alvenaria"},
@@ -832,22 +798,18 @@ FITA ISOLANTE	8.90	eletrica
             {id: 693, name: "SILICONE TEKBOND 256G INCOLO", price: 24.00, category: "alvenaria"},
             {id: 694, name: "SILICONE TEKBOND 50G", price: 12.00, category: "alvenaria"},
             {id: 695, name: "SILINDRO", price: 28.00, category: "alvenaria"},
-            {id: 696, name: "SISAL 200GR", price: 9.00, category: "alvenaria"},
+         
             {id: 697, name: "SISAL 400GR", price: 10.00, category: "alvenaria"},
-            {id: 698, name: "SODA CAUSTICA 400G", price: 18.00, category: "pintura"},
-            {id: 699, name: "SOQUETE C/ RABICHO", price: 5.00, category: "eletrica"},
+            
+       
             {id: 700, name: "SOS 100G", price: 25.00, category: "alvenaria"},
             {id: 701, name: "SOS 50G", price: 19.00, category: "alvenaria"},
             {id: 702, name: "SUPORTE MANGUEIRA", price: 12.00, category: "tubos"},
             {id: 703, name: "TABOA 30", price: 29.50, category: "alvenaria"},
-            {id: 704, name: "TALHADEIRA G", price: 30.00, category: "alvenaria"},
-            {id: 705, name: "TALHADEIRA M", price: 25.00, category: "alvenaria"},
-            {id: 706, name: "TALHADEIRA P", price: 18.00, category: "alvenaria"},
+       
             {id: 707, name: "TAMPA CEGA 4*4", price: 8.00, category: "eletrica"},
             {id: 708, name: "TAMPA CEGA 4X2", price: 8.00, category: "eletrica"},
-            {id: 709, name: "TANQUE 0,60X50", price: 155.00, category: "tubos"},
-            {id: 710, name: "TANQUE 15 LITROS", price: 58.00, category: "tubos"},
-            {id: 711, name: "TANQUE DUPLO 1,00X50", price: 185.00, category: "tubos"},
+ 
             {id: 712, name: "TANQUE PLASTICO 20 L", price: 58.00, category: "tubos"},
             {id: 713, name: "TANQUE PLASTICO 24 L", price: 70.00, category: "tubos"},
             {id: 714, name: "TARRACHA 1/2", price: 22.00, category: "tubos"},
@@ -891,7 +853,7 @@ FITA ISOLANTE	8.90	eletrica
             {id: 752, name: "TIJOLO 20*20 MILHEIRO", price: 0.90, category: "alvenaria"},
             {id: 753, name: "TIJOLO 30*20 MILHEIRO", price: 1.30, category: "alvenaria"},
             {id: 754, name: "TIJOLO 30*20 VAREJO", price: 1.40, category: "alvenaria"},
-            {id: 755, name: "TIJOLO LAJE", price: 1.80, category: "alvenaria"},
+            
             {id: 756, name: "TIJOLO MACICO", price: 2.60, category: "alvenaria"},
             {id: 757, name: "TIJOLO VAZADO ENVEZADO", price: 5.00, category: "alvenaria"},
             {id: 758, name: "TIJOLO VAZADO RETO", price: 4.00, category: "alvenaria"},
@@ -899,7 +861,7 @@ FITA ISOLANTE	8.90	eletrica
             {id: 760, name: "TINTA BRANCA 16LT COR E BRILH", price: 69.90, category: "pintura"},
             {id: 761, name: "TINTA CORALAR INTERIOR", price: 185.00, category: "pintura"},
             {id: 762, name: "TINTA SELETO 14LT EXTERIOR E INT", price: 119.90, category: "pintura"},
-            {id: 763, name: "TINTA SPRAY JET", price: 19.00, category: "pintura"},
+            
             {id: 764, name: "TOMADA 10A SOBREPOR", price: 12.00, category: "eletrica"},
             {id: 765, name: "TOMADA 10A BLUX", price: 9.90, category: "eletrica"},
             {id: 766, name: "TOMADA 2 SECAO 10A", price: 18.00, category: "eletrica"},
@@ -916,7 +878,7 @@ FITA ISOLANTE	8.90	eletrica
             {id: 777, name: "TOMADA MACHO 10 E 20A", price: 7.00, category: "eletrica"},
             {id: 778, name: "TORNEIRA / MAQUINA LAVAR", price: 28.00, category: "tubos"},
             {id: 779, name: "TORNEIRA BRANCA CURTA", price: 9.00, category: "tubos"},
-            {id: 780, name: "TORNEIRA BRANCA LONGA", price: 11.00, category: "tubos"},
+            
             {id: 781, name: "TORNEIRA HERC C/FILTRO BRANCA PAREDE", price: 60.00, category: "tubos"},
             {id: 782, name: "TORNEIRA HERC C/FILTRO PRETA", price: 75.00, category: "tubos"},
             {id: 783, name: "TORNEIRA HERC PIA CROMADA/B", price: 49.90, category: "tubos"},
@@ -995,7 +957,7 @@ FITA ISOLANTE	8.90	eletrica
             {id: 856, name: "VASO COMUM", price: 220.00, category: "tubos"},
             {id: 857, name: "VEDA CALHA", price: 28.00, category: "alvenaria"},
             {id: 858, name: "VEDA JUNTA 73G", price: 12.00, category: "alvenaria"},
-            {id: 859, name: "VEDANTE", price: 1.00, category: "alvenaria"},
+            ,
             {id: 860, name: "VERNIZ 900ML", price: 28.00, category: "pintura"},
             {id: 861, name: "VIAPLUS TOP 18KL", price: 95.00, category: "alvenaria"},
             {id: 862, name: "VIAPLUS TOP 4KG", price: 48.00, category: "alvenaria"},
@@ -1045,12 +1007,12 @@ FITA ISOLANTE	8.90	eletrica
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Quantidade:</label>
                             <div class="flex items-center justify-center space-x-2">
-                                <button onclick="decreaseQuantity('product-${product.id}', ${step}, ${minValue})" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center font-bold">-</button>
-                                <input type="number" id="product-${product.id}" value="${minValue}" min="${minValue}" step="${step}" class="w-16 text-center border border-gray-300 rounded px-2 py-1 font-semibold">
-                                <button onclick="increaseQuantity('product-${product.id}', ${step})" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center font-bold">+</button>
+                                <button id="minus-${product.id}" onclick="decreaseQuantity('product-${product.id}', ${step}, ${minValue}, 'minus-${product.id}')" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center font-bold">-</button>
+                                <input type="number" id="product-${product.id}" value="${minValue}" min="${minValue}" step="${step}" class="w-16 text-center border border-gray-300 rounded px-2 py-1 font-semibold" readonly>
+                                <button id="plus-${product.id}" onclick="increaseQuantity('product-${product.id}', ${step}, 'plus-${product.id}')" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center font-bold">+</button>
                             </div>
                         </div>
-                        <button onclick="addToCart(${product.id})" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-lg font-semibold transition-colors">
+                        <button onclick="addToCart(${product.id})" id="btn-${product.id}" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-lg font-semibold transition-colors">
                             Adicionar ao Carrinho
                         </button>
                     </div>
@@ -1098,18 +1060,28 @@ FITA ISOLANTE	8.90	eletrica
         }
 
         // Controles de quantidade nos produtos
-        function increaseQuantity(inputId, step) {
+        function increaseQuantity(inputId, step, buttonId) {
             const input = document.getElementById(inputId);
             const currentValue = parseFloat(input.value);
             input.value = (currentValue + step).toFixed(step < 1 ? 1 : 0);
+            
+            // Animação verde no botão +
+            const button = document.getElementById(buttonId);
+            button.classList.add('plus-animation');
+            setTimeout(() => button.classList.remove('plus-animation'), 300);
         }
 
-        function decreaseQuantity(inputId, step, minValue) {
+        function decreaseQuantity(inputId, step, minValue, buttonId) {
             const input = document.getElementById(inputId);
             const currentValue = parseFloat(input.value);
             const newValue = currentValue - step;
             if (newValue >= minValue) {
                 input.value = newValue.toFixed(step < 1 ? 1 : 0);
+                
+                // Animação vermelha no botão -
+                const button = document.getElementById(buttonId);
+                button.classList.add('minus-animation');
+                setTimeout(() => button.classList.remove('minus-animation'), 300);
             }
         }
 
@@ -1128,6 +1100,11 @@ FITA ISOLANTE	8.90	eletrica
             }
             
             updateCartDisplay();
+            
+            // Animação do botão
+            const button = document.getElementById(`btn-${productId}`);
+            button.classList.add('add-to-cart-animation');
+            setTimeout(() => button.classList.remove('add-to-cart-animation'), 400);
             
             // Animação do contador
             const cartCount = document.getElementById('cart-count');
@@ -1169,9 +1146,9 @@ FITA ISOLANTE	8.90	eletrica
                         <p class="text-gray-600 text-sm">R$ ${item.price.toFixed(2).replace('.', ',')} cada</p>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <button onclick="updateQuantity(${item.id}, -${step}, ${minValue})" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center">-</button>
+                        <button id="cart-minus-${item.id}" onclick="updateQuantity(${item.id}, -${step}, ${minValue}, 'cart-minus-${item.id}')" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center">-</button>
                         <span class="w-12 text-center font-semibold">${item.quantity % 1 === 0 ? item.quantity : item.quantity.toFixed(1)}</span>
-                        <button onclick="updateQuantity(${item.id}, ${step})" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center">+</button>
+                        <button id="cart-plus-${item.id}" onclick="updateQuantity(${item.id}, ${step}, ${minValue}, 'cart-plus-${item.id}')" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center">+</button>
                         <span class="w-20 text-right font-semibold">R$ ${itemTotal.toFixed(2).replace('.', ',')}</span>
                     </div>
                 `;
@@ -1182,14 +1159,37 @@ FITA ISOLANTE	8.90	eletrica
         }
 
         // Atualizar quantidade
-        function updateQuantity(productId, change, minValue = 1) {
+        function updateQuantity(productId, change, minValue = 1, buttonId = null) {
             const item = cart.find(item => item.id === productId);
             if (item) {
                 const newQuantity = item.quantity + change;
                 if (newQuantity >= minValue) {
                     item.quantity = newQuantity;
+                    
+                    // Animação do botão se fornecido
+                    if (buttonId) {
+                        const button = document.getElementById(buttonId);
+                        if (button) {
+                            if (change > 0) {
+                                button.classList.add('plus-animation');
+                                setTimeout(() => button.classList.remove('plus-animation'), 300);
+                            } else {
+                                button.classList.add('minus-animation');
+                                setTimeout(() => button.classList.remove('minus-animation'), 300);
+                            }
+                        }
+                    }
                 } else if (newQuantity <= 0) {
                     cart = cart.filter(item => item.id !== productId);
+                    
+                    // Animação vermelha quando remove item
+                    if (buttonId) {
+                        const button = document.getElementById(buttonId);
+                        if (button) {
+                            button.classList.add('minus-animation');
+                            setTimeout(() => button.classList.remove('minus-animation'), 300);
+                        }
+                    }
                 }
                 updateCartDisplay();
             }
@@ -1254,5 +1254,5 @@ FITA ISOLANTE	8.90	eletrica
             }
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9884541c33616493',t:'MTc1OTQwOTQ1OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9884b5c821e58461',t:'MTc1OTQxMzQ1OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
