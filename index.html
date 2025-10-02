@@ -55,7 +55,7 @@
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-3">
                     <div>
-                        <img src="https://i.ibb.co/RpkP3p6F/LOGO-2.jpg" alt="Casa Da Construção João e Lêa" class="w-40 h-40 object-contain" onerror="this.src=''; this.alt='Logo não carregou'; this.style.display='none';">
+                        <img src="https://i.ibb.co/RpkP3p6F/LOGO-2.jpg" alt="Casa Da Construção João e Lêa" class="w-40 h-40 object-contain rounded-lg" onerror="this.src=''; this.alt='Logo não disponível'; this.style.display='none';">
                     </div>
                     <div>
                         <h1 class="text-2xl font-bold text-gray-800">Casa Da Construção</h1>
@@ -72,7 +72,7 @@
             </div>
             
             <!-- Barra de Busca -->
-            <div class="mt-2 pt-2 border-t border-gray-200">
+            <div class="mt-4 pt-4 border-t border-gray-200">
                 <input type="text" id="search-input" placeholder="🔍 Buscar produtos..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-lg" onkeyup="searchProducts()">
             </div>
         </div>
@@ -106,137 +106,72 @@
 
         <!-- Produtos -->
         <div>
-                
-                <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    <!-- Produtos serão inseridos aqui pelo JavaScript -->
-                </div>
+            <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <!-- Produtos serão inseridos aqui pelo JavaScript -->
             </div>
         </div>
     </div>
 
-    <!-- Modal de Importação -->
-    <div id="import-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-                <div class="flex justify-between items-center p-6 border-b">
-                    <h2 class="text-2xl font-bold text-gray-800">Importar Produtos</h2>
-                    <button onclick="toggleImport()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
-                </div>
+    <!-- Modal do Carrinho - Tela Cheia -->
+    <div id="cart-modal" class="fixed inset-0 bg-white z-50 hidden flex flex-col">
+        <!-- Header fixo -->
+        <div class="flex justify-between items-center p-6 border-b bg-white shadow-sm">
+            <h2 class="text-2xl font-bold text-gray-800">Seu Carrinho</h2>
+            <button onclick="toggleCart()" class="text-gray-500 hover:text-gray-700 text-3xl font-bold">&times;</button>
+        </div>
+        
+        <!-- Lista de produtos com scroll -->
+        <div id="cart-items" class="flex-1 p-6 overflow-y-auto">
+            <!-- Itens do carrinho serão inseridos aqui -->
+        </div>
+        
+        <!-- Footer fixo com totais e botões -->
+        <div class="border-t bg-white p-6 shadow-lg">
+            <!-- Totais por Forma de Pagamento -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-3">Formas de Pagamento:</h3>
                 
-                <div class="p-6">
-                    <div class="mb-4">
-                        <h3 class="text-lg font-semibold mb-2">Como importar seus produtos:</h3>
-                        <div class="bg-gray-50 p-4 rounded-lg text-sm">
-                            <p class="mb-2"><strong>Formato:</strong> Cole uma linha por produto com as informações separadas por TAB (como copiar do Excel):</p>
-                            <p class="mb-2"><strong>NOME DO PRODUTO [TAB] PREÇO [TAB] CATEGORIA</strong></p>
-                            <p class="mb-2"><strong>Categorias disponíveis:</strong> alvenaria, tubos, eletrica, pintura</p>
-                            <p class="text-blue-600"><strong>Exemplo:</strong></p>
-                            <code class="bg-white p-2 block mt-1">
-CIMENTO 50KG	45.90	alvenaria<br>
-TUBO PVC 100MM	25.50	tubos<br>
-FITA ISOLANTE	8.90	eletrica
-                            </code>
+                <!-- Dinheiro/Débito/PIX -->
+                <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-3">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="text-lg font-semibold text-green-700">💵 À Vista (Dinheiro/Débito/PIX)</span>
                         </div>
+                        <span id="cash-total" class="text-xl font-bold text-green-600">R$ 0,00</span>
                     </div>
-                    
-                    <textarea 
-                        id="import-textarea" 
-                        placeholder="Cole aqui os dados dos seus produtos..."
-                        class="w-full h-64 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
-                    ></textarea>
-                    
-                    <div class="flex gap-4 mt-6">
-                        <button onclick="toggleImport()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 rounded-lg font-semibold transition-colors">
-                            Cancelar
-                        </button>
-                        <button onclick="importProducts()" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold transition-colors">
-                            ✅ Enviar e Importar
-                        </button>
+                </div>
+                
+                <!-- Cartão -->
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="text-lg font-semibold text-blue-700">💳 Cartão de Crédito</span>
+                            <p class="text-sm text-blue-600">Parcelamento até 10x</p>
+                        </div>
+                        <span id="card-total" class="text-xl font-bold text-blue-600">R$ 0,00</span>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Modal do Carrinho -->
-    <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
-                <div class="flex justify-between items-center p-6 border-b">
-                    <h2 class="text-2xl font-bold text-gray-800">Seu Carrinho</h2>
-                    <button onclick="toggleCart()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            
+            <div class="space-y-3">
+                <!-- Botões WhatsApp por forma de pagamento -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <button onclick="sendToWhatsApp('cash')" class="bg-green-500 hover:bg-green-600 text-white py-4 px-4 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 text-lg">
+                        📱💵 Enviar À Vista
+                    </button>
+                    <button onclick="sendToWhatsApp('card')" class="bg-blue-500 hover:bg-blue-600 text-white py-4 px-4 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 text-lg">
+                        📱💳 Enviar Cartão
+                    </button>
                 </div>
                 
-                <div id="cart-items" class="p-6 max-h-96 overflow-y-auto">
-                    <!-- Itens do carrinho serão inseridos aqui -->
-                </div>
-                
-                <div class="border-t p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-xl font-bold">Total:</span>
-                        <span id="cart-total" class="text-2xl font-bold text-yellow-600">R$ 0,00</span>
-                    </div>
-                    <div class="flex gap-4">
-                        <button onclick="clearCart()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 rounded-lg font-semibold transition-colors">
-                            Limpar Carrinho
-                        </button>
-                        <button onclick="sendToWhatsApp()" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold transition-colors">
-                            📱 Enviar para WhatsApp
-                        </button>
-                    </div>
-                </div>
+                <button onclick="clearCart()" class="w-full bg-gray-500 hover:bg-gray-600 text-white py-3 rounded-lg font-semibold transition-colors">
+                    🗑️ Limpar Carrinho
+                </button>
             </div>
         </div>
     </div>
 
     <script>
-        // Função para importar produtos de texto/planilha
-        function importProducts() {
-            const textarea = document.getElementById('import-textarea');
-            const importData = textarea.value.trim();
-            
-            if (!importData) {
-                alert('Cole os dados dos produtos no campo acima!');
-                return;
-            }
-            
-            try {
-                const lines = importData.split('\n');
-                const newProducts = [];
-                let currentId = Math.max(...products.map(p => p.id)) + 1;
-                
-                lines.forEach(line => {
-                    const parts = line.split('\t'); // Para dados de planilha separados por tab
-                    if (parts.length >= 3) {
-                        const name = parts[0].trim().toUpperCase();
-                        const price = parseFloat(parts[1].replace(',', '.'));
-                        const category = parts[2].trim().toLowerCase();
-                        
-                        if (name && !isNaN(price) && category) {
-                            newProducts.push({
-                                id: currentId++,
-                                name: name,
-                                price: price,
-                                category: category
-                            });
-                        }
-                    }
-                });
-                
-                if (newProducts.length > 0) {
-                    products.push(...newProducts);
-                    displayProducts(products);
-                    alert(`${newProducts.length} produtos importados com sucesso!`);
-                    textarea.value = '';
-                    document.getElementById('import-modal').classList.add('hidden');
-                } else {
-                    alert('Nenhum produto válido encontrado. Verifique o formato dos dados.');
-                }
-            } catch (error) {
-                alert('Erro ao importar produtos. Verifique o formato dos dados.');
-            }
-        }
-
         // Dados dos produtos organizados com materiais básicos primeiro
         const products = [
             // MATERIAIS BÁSICOS DE CONSTRUÇÃO
@@ -965,256 +900,249 @@ FITA ISOLANTE	8.90	eletrica
             {id: 864, name: "ZENITH 1LT", price: 32.00, category: "pintura"}
         ];
 
-        let cart = [];
+
+       let cart = [];
         let currentCategory = 'todos';
+        let filteredProducts = [...products];
 
-        // Inicializar a página
-        document.addEventListener('DOMContentLoaded', function() {
-            displayProducts(products);
-            updateCartDisplay();
-        });
-
-        // Função para obter imagem do produto
-        function getProductImage(productName, category) {
-            return ''; // sem imagens para produtos
-        }
-
-        // Exibir produtos
+        // Função para exibir produtos
         function displayProducts(productsToShow) {
             const grid = document.getElementById('products-grid');
-            grid.innerHTML = '';
-
-            productsToShow.forEach(product => {
-                const productCard = document.createElement('div');
-                productCard.className = 'product-card bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow';
-                
-                const isArenaOrPedra = product.name.toLowerCase().includes('areia') || product.name.toLowerCase().includes('pedra');
-                const minValue = isArenaOrPedra ? 1 : 1;
-                const step = isArenaOrPedra ? 0.5 : 1;
-                const productImage = getProductImage(product.name, product.category);
-                
-                productCard.innerHTML = `
-                    <div class="flex flex-col h-full">
-                        ${productImage ? `
-                        <div class="mb-3">
-                            <img src="${productImage}" alt="${product.name}" class="w-full h-32 object-cover rounded-lg" onerror="this.style.display='none';">
-                        </div>
-                        ` : ''}
-                        <div class="flex-1">
-                            <h3 class="font-semibold text-gray-800 text-sm leading-tight mb-2">${product.name}</h3>
-                            <p class="text-2xl font-bold text-yellow-600 mb-4">R$ ${product.price.toFixed(2).replace('.', ',')}</p>
-                        </div>
-                        <div class="mb-3">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Quantidade:</label>
-                            <div class="flex items-center justify-center space-x-2">
-                                <button id="minus-${product.id}" onclick="decreaseQuantity('product-${product.id}', ${step}, ${minValue}, 'minus-${product.id}')" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center font-bold">-</button>
-                                <input type="number" id="product-${product.id}" value="${minValue}" min="${minValue}" step="${step}" class="w-16 text-center border border-gray-300 rounded px-2 py-1 font-semibold" readonly>
-                                <button id="plus-${product.id}" onclick="increaseQuantity('product-${product.id}', ${step}, 'plus-${product.id}')" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center font-bold">+</button>
-                            </div>
-                        </div>
-                        <button onclick="addToCart(${product.id})" id="btn-${product.id}" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-lg font-semibold transition-colors">
-                            Adicionar ao Carrinho
-                        </button>
+            
+            if (productsToShow.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <div class="text-gray-400 text-6xl mb-4">🔍</div>
+                        <h3 class="text-xl font-semibold text-gray-600 mb-2">Nenhum produto encontrado</h3>
+                        <p class="text-gray-500">Tente buscar por outro termo ou categoria</p>
                     </div>
                 `;
-                
-                grid.appendChild(productCard);
-            });
+                return;
+            }
+            
+            grid.innerHTML = productsToShow.map(product => `
+                <div class="product-card bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                    <div class="mb-4">
+                        <h3 class="font-bold text-lg text-gray-800 mb-2 leading-tight">${product.name}</h3>
+                        <div class="flex items-center justify-between">
+                            <span id="price-${product.id}" class="text-2xl font-bold text-yellow-600">R$ ${product.price.toFixed(2)}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <button onclick="updateQuantity(${product.id}, -1)" class="w-8 h-8 rounded-full bg-gray-200 hover:bg-red-200 flex items-center justify-center text-gray-600 hover:text-red-600 transition-colors">
+                                <span class="text-lg font-bold">−</span>
+                            </button>
+                            <span id="qty-${product.id}" class="w-10 text-center font-semibold">${(product.id === 29 || product.id === 155) ? '0.0' : '0'}</span>
+                            <button onclick="updateQuantity(${product.id}, 1)" class="w-8 h-8 rounded-full bg-gray-200 hover:bg-green-200 flex items-center justify-center text-gray-600 hover:text-green-600 transition-colors">
+                                <span class="text-lg font-bold">+</span>
+                            </button>
+                        </div>
+                        
+                        <button onclick="addToCart(${product.id})" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors">
+                            🛒 Adicionar
+                        </button>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        // Filtrar por categoria
+        // Função para obter ícone da categoria
+        function getCategoryIcon(category) {
+            const icons = {
+                'alvenaria': '🧱',
+                'tubos': '🔧',
+                'eletrica': '⚡',
+                'pintura': '🎨',
+                'outros': '📦'
+            };
+            return icons[category] || '📦';
+        }
+
+        // Função para obter nome da categoria
+        function getCategoryName(category) {
+            const names = {
+                'alvenaria': 'Alvenaria',
+                'tubos': 'Tubos/Conexões',
+                'eletrica': 'Elétrica',
+                'pintura': 'Pintura',
+                'outros': 'Outros'
+            };
+            return names[category] || 'Outros';
+        }
+
+        // Função para filtrar por categoria
         function filterCategory(category) {
             currentCategory = category;
             
             // Atualizar botões de categoria
             document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.className = 'category-btn px-6 py-3 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors';
+                btn.classList.remove('bg-yellow-500', 'text-white');
+                btn.classList.add('bg-gray-100', 'hover:bg-gray-200', 'text-gray-700');
             });
             
-            event.target.className = 'category-btn px-6 py-3 rounded-lg bg-yellow-500 text-white font-semibold transition-colors';
+            event.target.classList.remove('bg-gray-100', 'hover:bg-gray-200', 'text-gray-700');
+            event.target.classList.add('bg-yellow-500', 'text-white');
             
-            let filteredProducts = products;
-            if (category !== 'todos') {
+            if (category === 'todos') {
+                filteredProducts = [...products];
+            } else {
                 filteredProducts = products.filter(product => product.category === category);
             }
             
             displayProducts(filteredProducts);
+            updateCartQuantities();
         }
 
-        // Buscar produtos
+        // Função para buscar produtos
         function searchProducts() {
-            const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
-            let filteredProducts = products;
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
             
-            if (currentCategory !== 'todos') {
-                filteredProducts = products.filter(product => product.category === currentCategory);
-            }
+            let productsToFilter = currentCategory === 'todos' ? products : products.filter(p => p.category === currentCategory);
             
             if (searchTerm) {
-                filteredProducts = filteredProducts.filter(product => 
+                filteredProducts = productsToFilter.filter(product => 
                     product.name.toLowerCase().includes(searchTerm)
                 );
+            } else {
+                filteredProducts = [...productsToFilter];
             }
             
             displayProducts(filteredProducts);
+            updateCartQuantities();
         }
 
-        // Controles de quantidade nos produtos
-        function increaseQuantity(inputId, step, buttonId) {
-            const input = document.getElementById(inputId);
-            const currentValue = parseFloat(input.value);
-            input.value = (currentValue + step).toFixed(step < 1 ? 1 : 0);
+        // Função para atualizar quantidade
+        function updateQuantity(productId, change) {
+            const qtyElement = document.getElementById(`qty-${productId}`);
+            const priceElement = document.getElementById(`price-${productId}`);
+            const product = products.find(p => p.id === productId);
             
-            // Animação verde no botão +
-            const button = document.getElementById(buttonId);
-            button.classList.add('plus-animation');
-            setTimeout(() => button.classList.remove('plus-animation'), 300);
-        }
-
-        function decreaseQuantity(inputId, step, minValue, buttonId) {
-            const input = document.getElementById(inputId);
-            const currentValue = parseFloat(input.value);
-            const newValue = currentValue - step;
-            if (newValue >= minValue) {
-                input.value = newValue.toFixed(step < 1 ? 1 : 0);
+            // Para AREIA (ID 29) e PEDRA 1 (ID 155), usar incrementos de 0.5
+            if (productId === 29 || productId === 155) {
+                let currentQty = parseFloat(qtyElement.textContent);
+                let newQty = Math.max(0, currentQty + (change * 0.5));
+                qtyElement.textContent = newQty.toFixed(1);
                 
-                // Animação vermelha no botão -
-                const button = document.getElementById(buttonId);
+                // Atualizar preço
+                if (newQty === 0) {
+                    priceElement.textContent = `R$ ${product.price.toFixed(2)}`;
+                } else {
+                    let totalPrice;
+                    if (productId === 29) {
+                        // Cálculo especial para areia
+                        totalPrice = calculateSandPrice(newQty);
+                    } else {
+                        // Cálculo normal para pedra
+                        totalPrice = product.price * newQty;
+                    }
+                    priceElement.textContent = `R$ ${totalPrice.toFixed(2)}`;
+                }
+            } else if (productId === 752 || productId === 753) {
+                // Para TIJOLO MILHEIRO (752 e 753), lógica especial: 0 -> 1000 -> 1001 -> 1002...
+                let currentQty = parseInt(qtyElement.textContent);
+                let newQty;
+                
+                if (change > 0) {
+                    if (currentQty === 0) {
+                        newQty = 1000;
+                    } else {
+                        newQty = currentQty + 1;
+                    }
+                } else {
+                    if (currentQty <= 1000) {
+                        newQty = 0;
+                    } else {
+                        newQty = currentQty - 1;
+                    }
+                }
+                
+                qtyElement.textContent = newQty;
+                
+                // Atualizar preço total
+                if (newQty === 0) {
+                    priceElement.textContent = `R$ ${product.price.toFixed(2)}`;
+                } else {
+                    const totalPrice = product.price * newQty;
+                    priceElement.textContent = `R$ ${totalPrice.toFixed(2)}`;
+                }
+            } else {
+                // Para outros produtos, usar incrementos normais de 1
+                let currentQty = parseInt(qtyElement.textContent);
+                let newQty = Math.max(0, currentQty + change);
+                qtyElement.textContent = newQty;
+                
+                // Atualizar preço total
+                if (newQty === 0) {
+                    priceElement.textContent = `R$ ${product.price.toFixed(2)}`;
+                } else {
+                    const totalPrice = product.price * newQty;
+                    priceElement.textContent = `R$ ${totalPrice.toFixed(2)}`;
+                }
+            }
+            
+            // Animação do botão
+            const button = event.target.closest('button');
+            if (change > 0) {
+                button.classList.add('plus-animation');
+                setTimeout(() => button.classList.remove('plus-animation'), 300);
+            } else if (change < 0 && parseFloat(qtyElement.textContent) >= 0) {
                 button.classList.add('minus-animation');
                 setTimeout(() => button.classList.remove('minus-animation'), 300);
             }
         }
 
-        // Adicionar ao carrinho
+        // Função para adicionar ao carrinho
         function addToCart(productId) {
-            const product = products.find(p => p.id === productId);
-            const quantityInput = document.getElementById(`product-${productId}`);
-            const quantity = parseFloat(quantityInput.value);
+            const qtyElement = document.getElementById(`qty-${productId}`);
             
+            // Para AREIA e PEDRA 1, usar parseFloat, para outros parseInt
+            const quantity = (productId === 29 || productId === 155) ? parseFloat(qtyElement.textContent) : parseInt(qtyElement.textContent);
+            
+            if (quantity === 0) {
+                alert('Selecione a quantidade primeiro!');
+                return;
+            }
+            
+            const product = products.find(p => p.id === productId);
             const existingItem = cart.find(item => item.id === productId);
             
             if (existingItem) {
                 existingItem.quantity += quantity;
             } else {
-                cart.push({...product, quantity: quantity});
+                cart.push({
+                    ...product,
+                    quantity: quantity
+                });
             }
             
-            updateCartDisplay();
+            // Resetar quantidade e preço
+            const priceElement = document.getElementById(`price-${productId}`);
+            if (productId === 29 || productId === 155) {
+                qtyElement.textContent = '0.0';
+            } else {
+                qtyElement.textContent = '0';
+            }
+            priceElement.textContent = `R$ ${product.price.toFixed(2)}`;
             
             // Animação do botão
-            const button = document.getElementById(`btn-${productId}`);
+            const button = event.target;
             button.classList.add('add-to-cart-animation');
             setTimeout(() => button.classList.remove('add-to-cart-animation'), 400);
             
-            // Animação do contador
-            const cartCount = document.getElementById('cart-count');
-            cartCount.classList.add('cart-badge');
-            setTimeout(() => cartCount.classList.remove('cart-badge'), 300);
-        }
-
-        // Atualizar exibição do carrinho
-        function updateCartDisplay() {
-            const cartCount = document.getElementById('cart-count');
-            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-            cartCount.textContent = totalItems;
-            
-            const cartItems = document.getElementById('cart-items');
-            const cartTotal = document.getElementById('cart-total');
-            
-            if (cart.length === 0) {
-                cartItems.innerHTML = '<p class="text-gray-500 text-center py-8">Seu carrinho está vazio</p>';
-                cartTotal.textContent = 'R$ 0,00';
-                return;
-            }
-            
-            cartItems.innerHTML = '';
-            let total = 0;
-            
-            cart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                total += itemTotal;
-                
-                const isArenaOrPedra = item.name.toLowerCase().includes('areia') || item.name.toLowerCase().includes('pedra');
-                const step = isArenaOrPedra ? 0.5 : 1;
-                const minValue = isArenaOrPedra ? 1 : 1;
-                
-                const cartItem = document.createElement('div');
-                cartItem.className = 'flex justify-between items-center py-3 border-b';
-                cartItem.innerHTML = `
-                    <div class="flex-1">
-                        <h4 class="font-semibold text-sm">${item.name}</h4>
-                        <p class="text-gray-600 text-sm">R$ ${item.price.toFixed(2).replace('.', ',')} cada</p>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <button id="cart-minus-${item.id}" onclick="updateQuantity(${item.id}, -${step}, ${minValue}, 'cart-minus-${item.id}')" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center">-</button>
-                        <span class="w-12 text-center font-semibold">${item.quantity % 1 === 0 ? item.quantity : item.quantity.toFixed(1)}</span>
-                        <button id="cart-plus-${item.id}" onclick="updateQuantity(${item.id}, ${step}, ${minValue}, 'cart-plus-${item.id}')" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center">+</button>
-                        <span class="w-20 text-right font-semibold">R$ ${itemTotal.toFixed(2).replace('.', ',')}</span>
-                    </div>
-                `;
-                cartItems.appendChild(cartItem);
-            });
-            
-            cartTotal.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
-        }
-
-        // Atualizar quantidade
-        function updateQuantity(productId, change, minValue = 1, buttonId = null) {
-            const item = cart.find(item => item.id === productId);
-            if (item) {
-                const newQuantity = item.quantity + change;
-                if (newQuantity >= minValue) {
-                    item.quantity = newQuantity;
-                    
-                    // Animação do botão se fornecido
-                    if (buttonId) {
-                        const button = document.getElementById(buttonId);
-                        if (button) {
-                            if (change > 0) {
-                                button.classList.add('plus-animation');
-                                setTimeout(() => button.classList.remove('plus-animation'), 300);
-                            } else {
-                                button.classList.add('minus-animation');
-                                setTimeout(() => button.classList.remove('minus-animation'), 300);
-                            }
-                        }
-                    }
-                } else if (newQuantity <= 0) {
-                    cart = cart.filter(item => item.id !== productId);
-                    
-                    // Animação vermelha quando remove item
-                    if (buttonId) {
-                        const button = document.getElementById(buttonId);
-                        if (button) {
-                            button.classList.add('minus-animation');
-                            setTimeout(() => button.classList.remove('minus-animation'), 300);
-                        }
-                    }
-                }
-                updateCartDisplay();
-            }
-        }
-
-        // Toggle carrinho
-        function toggleCart() {
-            const modal = document.getElementById('cart-modal');
-            modal.classList.toggle('hidden');
-        }
-
-        // Toggle modal de importação
-        function toggleImport() {
-            const modal = document.getElementById('import-modal');
-            modal.classList.toggle('hidden');
-        }
-
-        // Limpar carrinho
-        function clearCart() {
-            cart = [];
             updateCartDisplay();
         }
 
-        // Enviar para WhatsApp
-        function sendToWhatsApp() {
+        // Função para calcular preço da areia
+        function calculateSandPrice(quantity) {
+            if (quantity === 0.5) return 75.00;
+            if (quantity >= 1) return quantity * 135.00;
+            return 0;
+        }
+
+        // Função para enviar para WhatsApp
+        function sendToWhatsApp(paymentType = 'both') {
             if (cart.length === 0) {
                 alert('Seu carrinho está vazio!');
                 return;
@@ -1224,35 +1152,218 @@ FITA ISOLANTE	8.90	eletrica
             let total = 0;
             
             cart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
+                let itemTotal;
+                let unitPrice;
+                
+                // Cálculo especial para AREIA
+                if (item.id === 29) {
+                    itemTotal = calculateSandPrice(item.quantity);
+                    unitPrice = item.quantity === 0.5 ? 75.00 : 135.00;
+                } else {
+                    itemTotal = item.price * item.quantity;
+                    unitPrice = item.price;
+                }
+                
                 total += itemTotal;
-                const quantityDisplay = item.quantity % 1 === 0 ? item.quantity : item.quantity.toFixed(1);
                 message += `• ${item.name}\n`;
-                message += `  Qtd: ${quantityDisplay} x R$ ${item.price.toFixed(2).replace('.', ',')} = R$ ${itemTotal.toFixed(2).replace('.', ',')}\n\n`;
+                message += `  Qtd: ${item.quantity} | Valor: R$ ${unitPrice.toFixed(2)} | Total: R$ ${itemTotal.toFixed(2)}\n\n`;
             });
             
-            message += `💰 *TOTAL: R$ ${total.toFixed(2).replace('.', ',')}*\n\n`;
-            message += '📞 Aguardo confirmação do pedido!';
+            const cashPrice = total;
+            const cardPrice = total * 1.16;
             
-            // Número do WhatsApp da loja (formato: 55 + DDD + número)
-            const phoneNumber = '5521982153895'; // Substitua pelo número real da loja
-            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            // Adicionar informação de pagamento baseada no tipo selecionado
+            if (paymentType === 'cash') {
+                message += `💰 *FORMA DE PAGAMENTO ESCOLHIDA:*\n`;
+                message += `💵 À Vista (Dinheiro/Débito/PIX): R$ ${cashPrice.toFixed(2)}\n\n`;
+            } else if (paymentType === 'card') {
+                message += `💰 *FORMA DE PAGAMENTO ESCOLHIDA:*\n`;
+                message += `💳 Cartão de Crédito: R$ ${cardPrice.toFixed(2)} (parcelamento até 10x)\n\n`;
+            } else {
+                message += `💰 *FORMAS DE PAGAMENTO DISPONÍVEIS:*\n`;
+                message += `💵 À Vista (Dinheiro/Débito/PIX): R$ ${cashPrice.toFixed(2)}\n`;
+                message += `💳 Cartão de Crédito: R$ ${cardPrice.toFixed(2)} (até 10x)\n\n`;
+            }
             
-            window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+            message += '📍 Casa Da Construção João e Lêa Lajes Fortes\n';
+            message += '🕒 Aguardamos seu contato para finalizar o pedido!';
+            
+            // ALTERE SEU NÚMERO AQUI - Formato: 55 + DDD + número
+            const phoneNumber = '5521982153895'; // ← ALTERE ESTE NÚMERO!
+            
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+            
+            window.open(whatsappUrl, '_blank');
         }
 
-        // Fechar modais clicando fora
-        document.getElementById('cart-modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                toggleCart();
-            }
-        });
+        // Função para atualizar quantidades no carrinho
+        function updateCartQuantities() {
+            cart.forEach(item => {
+                const qtyElement = document.getElementById(`qty-${item.id}`);
+                if (qtyElement) {
+                    qtyElement.textContent = '0';
+                }
+            });
+        }
 
-        document.getElementById('import-modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                toggleImport();
+        // Função para atualizar display do carrinho
+        function updateCartDisplay() {
+            const cartCount = document.getElementById('cart-count');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            
+            cartCount.textContent = totalItems;
+            cartCount.classList.add('cart-badge');
+            setTimeout(() => cartCount.classList.remove('cart-badge'), 300);
+        }
+
+        // Função para toggle do carrinho
+        function toggleCart() {
+            const modal = document.getElementById('cart-modal');
+            const isHidden = modal.classList.contains('hidden');
+            
+            if (isHidden) {
+                modal.classList.remove('hidden');
+                displayCartItems();
+            } else {
+                modal.classList.add('hidden');
             }
+        }
+
+        // Função para exibir itens do carrinho
+        function displayCartItems() {
+            const cartItems = document.getElementById('cart-items');
+            const cashTotal = document.getElementById('cash-total');
+            const cardTotal = document.getElementById('card-total');
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="text-gray-400 text-4xl mb-4">🛒</div>
+                        <p class="text-gray-500">Seu carrinho está vazio</p>
+                    </div>
+                `;
+                cashTotal.textContent = 'R$ 0,00';
+                cardTotal.textContent = 'R$ 0,00';
+                return;
+            }
+            
+            let total = 0;
+            cartItems.innerHTML = cart.map(item => {
+                let itemTotal;
+                let unitPrice;
+                let quantityDisplay;
+                
+                // Cálculo especial para AREIA e PEDRA 1
+                if (item.id === 29) {
+                    itemTotal = calculateSandPrice(item.quantity);
+                    unitPrice = item.quantity === 0.5 ? 75.00 : 135.00;
+                    quantityDisplay = item.quantity.toFixed(1);
+                } else if (item.id === 155) {
+                    itemTotal = item.price * item.quantity;
+                    unitPrice = item.price;
+                    quantityDisplay = item.quantity.toFixed(1);
+                } else {
+                    itemTotal = item.price * item.quantity;
+                    unitPrice = item.price;
+                    quantityDisplay = item.quantity;
+                }
+                
+                total += itemTotal;
+                
+                return `
+                    <div class="flex items-center justify-between py-4 border-b border-gray-200">
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-800">${item.name}</h4>
+                            <p class="text-sm text-gray-600">R$ ${unitPrice.toFixed(2)} ${item.id === 29 ? (item.quantity === 0.5 ? 'por 0.5m³' : 'por m³') : 'cada'}</p>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="flex items-center space-x-2">
+                                <button onclick="changeCartQuantity(${item.id}, -1)" class="w-8 h-8 rounded-full bg-gray-200 hover:bg-red-200 flex items-center justify-center text-gray-600 hover:text-red-600">
+                                    <span class="text-sm font-bold">−</span>
+                                </button>
+                                <span class="w-12 text-center font-semibold">${quantityDisplay}</span>
+                                <button onclick="changeCartQuantity(${item.id}, 1)" class="w-8 h-8 rounded-full bg-gray-200 hover:bg-green-200 flex items-center justify-center text-gray-600 hover:text-green-600">
+                                    <span class="text-sm font-bold">+</span>
+                                </button>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-bold text-yellow-600">R$ ${itemTotal.toFixed(2)}</p>
+                                <button onclick="removeFromCart(${item.id})" class="text-xs text-red-500 hover:text-red-700">
+                                    Remover
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Calcular totais
+            const cashPrice = total;
+            const cardPrice = total * 1.16; // +16% para cartão
+            
+            cashTotal.textContent = `R$ ${cashPrice.toFixed(2)}`;
+            cardTotal.textContent = `R$ ${cardPrice.toFixed(2)}`;
+        }
+
+        // Função para alterar quantidade no carrinho
+        function changeCartQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                // Para AREIA (ID 29) e PEDRA 1 (ID 155), usar incrementos de 0.5
+                if (productId === 29 || productId === 155) {
+                    item.quantity += (change * 0.5);
+                    item.quantity = Math.max(0, item.quantity);
+                } else if (productId === 752 || productId === 753) {
+                    // Para TIJOLO MILHEIRO, lógica especial no carrinho
+                    if (change > 0) {
+                        if (item.quantity === 0) {
+                            item.quantity = 1000;
+                        } else {
+                            item.quantity += 1;
+                        }
+                    } else {
+                        if (item.quantity <= 1000) {
+                            item.quantity = 0;
+                        } else {
+                            item.quantity -= 1;
+                        }
+                    }
+                } else {
+                    item.quantity += change;
+                }
+                
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    displayCartItems();
+                    updateCartDisplay();
+                }
+            }
+        }
+
+        // Função para remover do carrinho
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            displayCartItems();
+            updateCartDisplay();
+        }
+
+        // Função para limpar carrinho
+        function clearCart() {
+            if (cart.length === 0) return;
+            
+            if (confirm('Tem certeza que deseja limpar o carrinho?')) {
+                cart = [];
+                displayCartItems();
+                updateCartDisplay();
+            }
+        }
+
+        // Inicializar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            displayProducts(products);
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9884b5c821e58461',t:'MTc1OTQxMzQ1OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98855ff346f16493',t:'MTc1OTQyMDQyOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
