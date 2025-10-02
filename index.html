@@ -982,10 +982,8 @@
                 btn.classList.add('bg-gray-100', 'hover:bg-gray-200', 'text-gray-700');
             });
             
-            if (event && event.target) {
-                event.target.classList.remove('bg-gray-100', 'hover:bg-gray-200', 'text-gray-700');
-                event.target.classList.add('bg-yellow-500', 'text-white');
-            }
+            event.target.classList.remove('bg-gray-100', 'hover:bg-gray-200', 'text-gray-700');
+            event.target.classList.add('bg-yellow-500', 'text-white');
             
             if (category === 'todos') {
                 filteredProducts = [...products];
@@ -1020,8 +1018,6 @@
             const qtyElement = document.getElementById(`qty-${productId}`);
             const priceElement = document.getElementById(`price-${productId}`);
             const product = products.find(p => p.id === productId);
-            
-            if (!qtyElement || !priceElement || !product) return;
             
             // Para AREIA (ID 29) e PEDRA 1 (ID 155), usar incrementos de 0.5
             if (productId === 29 || productId === 155) {
@@ -1087,35 +1083,30 @@
             }
             
             // Animação do botão
-            const button = event.target ? event.target.closest('button') : null;
-            if (button) {
-                if (change > 0) {
-                    button.classList.add('plus-animation');
-                    setTimeout(() => button.classList.remove('plus-animation'), 300);
-                } else if (change < 0 && parseFloat(qtyElement.textContent) >= 0) {
-                    button.classList.add('minus-animation');
-                    setTimeout(() => button.classList.remove('minus-animation'), 300);
-                }
+            const button = event.target.closest('button');
+            if (change > 0) {
+                button.classList.add('plus-animation');
+                setTimeout(() => button.classList.remove('plus-animation'), 300);
+            } else if (change < 0 && parseFloat(qtyElement.textContent) >= 0) {
+                button.classList.add('minus-animation');
+                setTimeout(() => button.classList.remove('minus-animation'), 300);
             }
         }
 
         // Função para adicionar ao carrinho
         function addToCart(productId) {
             const qtyElement = document.getElementById(`qty-${productId}`);
-            if (!qtyElement) return;
             
             // Para AREIA e PEDRA 1, usar parseFloat, para outros parseInt
             const quantity = (productId === 29 || productId === 155) ? parseFloat(qtyElement.textContent) : parseInt(qtyElement.textContent);
             
-            // Não permitir adicionar se quantidade for 0 ou NaN
-            if (quantity === 0 || isNaN(quantity)) {
+            // Não permitir adicionar se quantidade for 0
+            if (quantity === 0) {
                 alert('Selecione a quantidade primeiro!');
                 return;
             }
             
             const product = products.find(p => p.id === productId);
-            if (!product) return;
-            
             const existingItem = cart.find(item => item.id === productId);
             
             if (existingItem) {
@@ -1129,21 +1120,17 @@
             
             // Resetar quantidade e preço
             const priceElement = document.getElementById(`price-${productId}`);
-            if (priceElement) {
-                if (productId === 29 || productId === 155) {
-                    qtyElement.textContent = '0.0';
-                } else {
-                    qtyElement.textContent = '0';
-                }
-                priceElement.textContent = `R$ ${product.price.toFixed(2)}`;
+            if (productId === 29 || productId === 155) {
+                qtyElement.textContent = '0.0';
+            } else {
+                qtyElement.textContent = '0';
             }
+            priceElement.textContent = `R$ ${product.price.toFixed(2)}`;
             
             // Animação do botão
             const button = event.target;
-            if (button) {
-                button.classList.add('add-to-cart-animation');
-                setTimeout(() => button.classList.remove('add-to-cart-animation'), 400);
-            }
+            button.classList.add('add-to-cart-animation');
+            setTimeout(() => button.classList.remove('add-to-cart-animation'), 400);
             
             updateCartDisplay();
         }
@@ -1183,8 +1170,6 @@
         // Função para editar quantidade clicando no número
         function editQuantity(productId) {
             const qtyElement = document.getElementById(`qty-${productId}`);
-            if (!qtyElement) return;
-            
             const currentValue = qtyElement.textContent;
             
             // Criar input temporário
@@ -1290,7 +1275,7 @@
             message += '🕒 Aguardamos seu contato para finalizar o pedido!';
             
             // ALTERE SEU NÚMERO AQUI - Formato: 55 + DDD + número
-            const phoneNumber = '5521982153895'; // ← ALTERE ESTE NÚMERO!
+            const phoneNumber = '5511999999999'; // ← ALTERE ESTE NÚMERO!
             
             const encodedMessage = encodeURIComponent(message);
             const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
@@ -1410,36 +1395,36 @@
         // Função para alterar quantidade no carrinho
         function changeCartQuantity(productId, change) {
             const item = cart.find(item => item.id === productId);
-            if (!item) return;
-            
-            // Para AREIA (ID 29) e PEDRA 1 (ID 155), usar incrementos de 0.5
-            if (productId === 29 || productId === 155) {
-                item.quantity += (change * 0.5);
-                item.quantity = Math.max(0, item.quantity);
-            } else if (productId === 752 || productId === 753) {
-                // Para TIJOLO MILHEIRO, lógica especial no carrinho
-                if (change > 0) {
-                    if (item.quantity === 0) {
-                        item.quantity = 1000;
+            if (item) {
+                // Para AREIA (ID 29) e PEDRA 1 (ID 155), usar incrementos de 0.5
+                if (productId === 29 || productId === 155) {
+                    item.quantity += (change * 0.5);
+                    item.quantity = Math.max(0, item.quantity);
+                } else if (productId === 752 || productId === 753) {
+                    // Para TIJOLO MILHEIRO, lógica especial no carrinho
+                    if (change > 0) {
+                        if (item.quantity === 0) {
+                            item.quantity = 1000;
+                        } else {
+                            item.quantity += 1;
+                        }
                     } else {
-                        item.quantity += 1;
+                        if (item.quantity <= 1000) {
+                            item.quantity = 0;
+                        } else {
+                            item.quantity -= 1;
+                        }
                     }
                 } else {
-                    if (item.quantity <= 1000) {
-                        item.quantity = 0;
-                    } else {
-                        item.quantity -= 1;
-                    }
+                    item.quantity += change;
                 }
-            } else {
-                item.quantity += change;
-            }
-            
-            if (item.quantity <= 0) {
-                removeFromCart(productId);
-            } else {
-                displayCartItems();
-                updateCartDisplay();
+                
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    displayCartItems();
+                    updateCartDisplay();
+                }
             }
         }
 
@@ -1466,5 +1451,5 @@
             displayProducts(products);
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98867f29b1788461',t:'MTc1OTQzMjE5My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98867b3383476493',t:'MTc1OTQzMjAzOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
