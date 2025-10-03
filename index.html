@@ -64,16 +64,28 @@
                 </div>
                 
                 <div class="flex gap-3">
-                    <button onclick="toggleCart()" class="relative bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                    <button onclick="toggleCart()" class="relative bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors shadow-lg">
                         🛒 Carrinho
-                        <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold cart-badge">0</span>
+                        <span id="cart-count" class="absolute -top-3 -right-3 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold cart-badge">0</span>
                     </button>
                 </div>
             </div>
             
             <!-- Barra de Busca -->
-            <div class="mt-4 pt-4 border-t border-gray-200">
-                <input type="text" id="search-input" placeholder="🔍 Buscar produtos..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-lg" onkeyup="searchProducts()">
+            <div class="mt-4 pt-4 border-t border-gray-200 relative">
+                <div class="relative">
+                    <input type="text" id="search-input" placeholder="🔍 Buscar produtos..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-lg" onkeyup="searchProducts()" onkeypress="handleSearchEnter(event)" onfocus="showSuggestions()" onblur="hideSuggestions()" onclick="showSuggestions()">
+                    
+                    <!-- Indicador de carregamento -->
+                    <div id="search-loading" class="absolute right-3 top-1/2 transform -translate-y-1/2 hidden">
+                        <div class="animate-spin rounded-full h-6 w-6 border-2 border-yellow-500 border-t-transparent"></div>
+                    </div>
+                </div>
+                
+                <!-- Lista de Sugestões -->
+                <div id="suggestions-list" class="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto hidden">
+                    <!-- Sugestões serão inseridas aqui -->
+                </div>
             </div>
         </div>
     </header>
@@ -112,61 +124,96 @@
         </div>
     </div>
 
-    <!-- Modal do Carrinho - Tela Cheia -->
+
+
+    <!-- Modal do Carrinho - Layout Otimizado -->
     <div id="cart-modal" class="fixed inset-0 bg-white z-50 hidden flex flex-col">
         <!-- Header fixo -->
-        <div class="flex justify-between items-center p-6 border-b bg-white shadow-sm">
-            <h2 class="text-2xl font-bold text-gray-800">Seu Carrinho</h2>
-            <button onclick="toggleCart()" class="text-gray-500 hover:text-gray-700 text-3xl font-bold">&times;</button>
+        <div class="flex justify-between items-center p-4 border-b bg-white shadow-sm">
+            <h2 class="text-xl font-bold text-gray-800">🛒 Seu Carrinho</h2>
+            <button onclick="toggleCart()" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">&times;</button>
         </div>
         
-        <!-- Lista de produtos com scroll -->
-        <div id="cart-items" class="flex-1 p-6 overflow-y-auto">
-            <!-- Itens do carrinho serão inseridos aqui -->
-        </div>
-        
-        <!-- Footer fixo com totais e botões -->
-        <div class="border-t bg-white p-6 shadow-lg">
-            <!-- Totais por Forma de Pagamento -->
-            <div class="mb-6">
-                <h3 class="text-lg font-bold text-gray-800 mb-3">Formas de Pagamento:</h3>
+        <!-- Conteúdo principal em grid responsivo -->
+        <div class="flex-1 overflow-y-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 h-full">
                 
-                <!-- Dinheiro/Débito/PIX -->
-                <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-3">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <span class="text-lg font-semibold text-green-700">💵 À Vista (Dinheiro/Débito/PIX)</span>
-                        </div>
-                        <span id="cash-total" class="text-xl font-bold text-green-600">R$ 0,00</span>
+                <!-- Coluna 1: Lista de Produtos -->
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+                        📦 Produtos no Carrinho
+                    </h3>
+                    <div id="cart-items" class="space-y-3 max-h-80 overflow-y-auto">
+                        <!-- Itens do carrinho serão inseridos aqui -->
                     </div>
                 </div>
                 
-                <!-- Cartão -->
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <span class="text-lg font-semibold text-blue-700">💳 Cartão de Crédito</span>
-                            <p class="text-sm text-blue-600">Parcelamento até 10x</p>
+                <!-- Coluna 2: Resumo e Ações -->
+                <div class="space-y-4">
+                    
+                    <!-- Totais por Forma de Pagamento -->
+                    <div class="bg-white border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+                            💰 Formas de Pagamento
+                        </h3>
+                        
+                        <!-- Dinheiro/Débito/PIX -->
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <span class="text-base font-semibold text-green-700">💵 À Vista</span>
+                                    <p class="text-xs text-green-600">Dinheiro/Débito/PIX</p>
+                                </div>
+                                <span id="cash-total" class="text-lg font-bold text-green-600">R$ 0,00</span>
+                            </div>
                         </div>
-                        <span id="card-total" class="text-xl font-bold text-blue-600">R$ 0,00</span>
+                        
+                        <!-- Cartão -->
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <span class="text-base font-semibold text-blue-700">💳 Cartão</span>
+                                    <p class="text-xs text-blue-600">Até 10x sem juros</p>
+                                </div>
+                                <span id="card-total" class="text-lg font-bold text-blue-600">R$ 0,00</span>
+                            </div>
+                        </div>
                     </div>
+                    
+                    <!-- Prazo de Entrega -->
+                    <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-3">
+                        <div class="flex items-center mb-2">
+                            <span class="text-xl mr-2">🚚</span>
+                            <span class="text-base font-semibold text-orange-700">Prazo de Entrega</span>
+                        </div>
+                        <div class="text-sm text-orange-600 mb-2" id="delivery-info">Calculando prazo...</div>
+                        <div class="bg-orange-100 px-3 py-2 rounded-lg text-center">
+                            <span class="text-xs font-medium text-orange-800">📅 Entrega até:</span>
+                            <div class="text-sm font-bold text-orange-700" id="delivery-date">--</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Botões de Ação -->
+                    <div class="space-y-3">
+                        <!-- Botões WhatsApp -->
+                        <div class="grid grid-cols-1 gap-2">
+                            <button onclick="sendToWhatsApp('cash')" class="bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2">
+                                📱💵 Enviar Pedido À Vista
+                            </button>
+                            <button onclick="sendToWhatsApp('card')" class="bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2">
+                                📱💳 Enviar Pedido no Cartão de Crédito
+                            </button>
+                            <button onclick="saveQuote()" class="bg-purple-500 hover:bg-purple-600 text-white py-3 px-4 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2">
+                                💾📄 Salvar Orçamento
+                            </button>
+                        </div>
+                        
+                        <button onclick="clearCart()" class="w-full bg-gray-500 hover:bg-gray-600 text-white py-2 rounded-lg font-semibold transition-colors text-sm">
+                            🗑️ Limpar Carrinho
+                        </button>
+                    </div>
+                    
                 </div>
-            </div>
-            
-            <div class="space-y-3">
-                <!-- Botões WhatsApp por forma de pagamento -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <button onclick="sendToWhatsApp('cash')" class="bg-green-500 hover:bg-green-600 text-white py-4 px-4 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 text-lg">
-                        📱💵 Enviar À Vista
-                    </button>
-                    <button onclick="sendToWhatsApp('card')" class="bg-blue-500 hover:bg-blue-600 text-white py-4 px-4 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 text-lg">
-                        📱💳 Enviar Cartão
-                    </button>
-                </div>
-                
-                <button onclick="clearCart()" class="w-full bg-gray-500 hover:bg-gray-600 text-white py-3 rounded-lg font-semibold transition-colors">
-                    🗑️ Limpar Carrinho
-                </button>
             </div>
         </div>
     </div>
@@ -911,10 +958,29 @@
             
             if (productsToShow.length === 0) {
                 grid.innerHTML = `
-                    <div class="col-span-full text-center py-12">
-                        <div class="text-gray-400 text-6xl mb-4">🔍</div>
-                        <h3 class="text-xl font-semibold text-gray-600 mb-2">Nenhum produto encontrado</h3>
-                        <p class="text-gray-500">Tente buscar por outro termo ou categoria</p>
+                    <div class="col-span-full">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <!-- Mensagem de não encontrado -->
+                            <div class="text-center py-12">
+                                <div class="text-gray-400 text-6xl mb-4">🔍</div>
+                                <h3 class="text-xl font-semibold text-gray-600 mb-2">Nenhum produto encontrado</h3>
+                                <p class="text-gray-500 mb-4">Não encontramos produtos com esse termo</p>
+                                <button onclick="getSuggestions('${document.getElementById('search-input').value}')" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                                    🤖 Pedir Sugestões de IA
+                                </button>
+                            </div>
+                            
+                            <!-- Painel de sugestões da IA -->
+                            <div id="ai-suggestions" class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-6 border-2 border-blue-200 hidden">
+                                <div class="flex items-center mb-4">
+                                    <div class="text-2xl mr-3">🤖</div>
+                                    <h3 class="text-lg font-bold text-blue-800">Sugestões da IA</h3>
+                                </div>
+                                <div id="ai-suggestions-content" class="space-y-3">
+                                    <!-- Sugestões serão inseridas aqui -->
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 `;
                 return;
@@ -982,8 +1048,10 @@
                 btn.classList.add('bg-gray-100', 'hover:bg-gray-200', 'text-gray-700');
             });
             
-            event.target.classList.remove('bg-gray-100', 'hover:bg-gray-200', 'text-gray-700');
-            event.target.classList.add('bg-yellow-500', 'text-white');
+            if (event && event.target) {
+                event.target.classList.remove('bg-gray-100', 'hover:bg-gray-200', 'text-gray-700');
+                event.target.classList.add('bg-yellow-500', 'text-white');
+            }
             
             if (category === 'todos') {
                 filteredProducts = [...products];
@@ -995,22 +1063,203 @@
             updateCartQuantities();
         }
 
-        // Função para buscar produtos
+        // Função para lidar com Enter na busca
+        function handleSearchEnter(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                // Fechar sugestões imediatamente
+                const suggestionsList = document.getElementById('suggestions-list');
+                suggestionsList.classList.add('hidden');
+                performSearchWithAnimation();
+            }
+        }
+
+        // Função para buscar com animação
+        function performSearchWithAnimation() {
+            const searchInput = document.getElementById('search-input');
+            const searchLoading = document.getElementById('search-loading');
+            const suggestionsList = document.getElementById('suggestions-list');
+            
+            // Esconder sugestões
+            suggestionsList.classList.add('hidden');
+            
+            // Mostrar loading
+            searchLoading.classList.remove('hidden');
+            
+            // Simular delay de busca para mostrar animação
+            setTimeout(() => {
+                searchProducts();
+                searchLoading.classList.add('hidden');
+                
+                // Animação de resultado encontrado
+                const grid = document.getElementById('products-grid');
+                grid.style.opacity = '0';
+                grid.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    grid.style.transition = 'all 0.5s ease-out';
+                    grid.style.opacity = '1';
+                    grid.style.transform = 'translateY(0)';
+                }, 50);
+                
+                // Remover transição após animação
+                setTimeout(() => {
+                    grid.style.transition = '';
+                }, 550);
+                
+            }, 800); // 800ms de loading
+        }
+
+        // Função para buscar produtos com palavras-chave especiais
         function searchProducts() {
             const searchTerm = document.getElementById('search-input').value.toLowerCase();
             
             let productsToFilter = currentCategory === 'todos' ? products : products.filter(p => p.category === currentCategory);
             
             if (searchTerm) {
-                filteredProducts = productsToFilter.filter(product => 
-                    product.name.toLowerCase().includes(searchTerm)
-                );
+                filteredProducts = productsToFilter.filter(product => {
+                    const productName = product.name.toLowerCase();
+                    
+                    // Busca normal por nome
+                    if (productName.includes(searchTerm)) {
+                        return true;
+                    }
+                    
+                    // Palavras-chave especiais para cimentos - busca progressiva
+                    if (isPartialMatch(searchTerm, 'cimento') || isPartialMatch(searchTerm, 'tupi') || isPartialMatch(searchTerm, 'maua') || isPartialMatch(searchTerm, 'csn')) {
+                        return productName.includes('cp2') || productName.includes('cp3') || productName.includes('cimento');
+                    }
+                    
+                    // Palavra-chave especial para pedra - "brita" encontra "PEDRA 1"
+                    if (isPartialMatch(searchTerm, 'brita')) {
+                        return productName.includes('pedra');
+                    }
+                    
+                    return false;
+                });
             } else {
                 filteredProducts = [...productsToFilter];
             }
             
             displayProducts(filteredProducts);
             updateCartQuantities();
+            updateSuggestions();
+        }
+
+        // Função para verificar correspondência parcial progressiva
+        function isPartialMatch(searchTerm, targetWord) {
+            if (searchTerm.length === 0) return false;
+            return targetWord.toLowerCase().startsWith(searchTerm) || searchTerm.startsWith(targetWord.toLowerCase().substring(0, searchTerm.length));
+        }
+
+        // Função para mostrar sugestões
+        function showSuggestions() {
+            updateSuggestions();
+        }
+
+        // Função para esconder sugestões (com delay para permitir clique)
+        function hideSuggestions() {
+            setTimeout(() => {
+                const suggestionsList = document.getElementById('suggestions-list');
+                if (suggestionsList) {
+                    suggestionsList.classList.add('hidden');
+                }
+            }, 200);
+        }
+
+        // Função para atualizar sugestões
+        function updateSuggestions() {
+            const searchInput = document.getElementById('search-input');
+            const suggestionsList = document.getElementById('suggestions-list');
+            const searchTerm = searchInput.value.toLowerCase();
+            
+            if (!searchTerm || searchTerm.length < 1) {
+                suggestionsList.classList.add('hidden');
+                return;
+            }
+            
+            // Buscar produtos que correspondem ao termo
+            let productsToFilter = currentCategory === 'todos' ? products : products.filter(p => p.category === currentCategory);
+            
+            const matchingProducts = productsToFilter.filter(product => {
+                const productName = product.name.toLowerCase();
+                
+                // Busca normal por nome
+                if (productName.includes(searchTerm)) {
+                    return true;
+                }
+                
+                // Palavras-chave especiais para cimentos - busca progressiva
+                if (isPartialMatch(searchTerm, 'cimento') || isPartialMatch(searchTerm, 'tupi') || isPartialMatch(searchTerm, 'maua') || isPartialMatch(searchTerm, 'csn')) {
+                    return productName.includes('cp2') || productName.includes('cp3') || productName.includes('cimento');
+                }
+                
+                // Palavra-chave especial para pedra - "brita" encontra "PEDRA 1"
+                if (isPartialMatch(searchTerm, 'brita')) {
+                    return productName.includes('pedra');
+                }
+                
+                return false;
+            });
+            
+            if (matchingProducts.length === 0) {
+                suggestionsList.classList.add('hidden');
+                return;
+            }
+            
+            // Limitar a 8 sugestões e ordenar por relevância
+            const suggestions = matchingProducts
+                .slice(0, 8)
+                .sort((a, b) => {
+                    const aName = a.name.toLowerCase();
+                    const bName = b.name.toLowerCase();
+                    
+                    // Priorizar correspondências que começam com o termo
+                    const aStarts = aName.startsWith(searchTerm);
+                    const bStarts = bName.startsWith(searchTerm);
+                    
+                    if (aStarts && !bStarts) return -1;
+                    if (!aStarts && bStarts) return 1;
+                    
+                    // Depois por ordem alfabética
+                    return aName.localeCompare(bName);
+                });
+            
+            // Gerar HTML das sugestões
+            suggestionsList.innerHTML = suggestions.map(product => `
+                <div class="px-4 py-3 hover:bg-yellow-50 cursor-pointer border-b border-gray-100 last:border-b-0 flex items-center justify-between" onclick="selectSuggestion('${product.name}')">
+                    <div>
+                        <span class="font-medium text-gray-800">${highlightMatch(product.name, searchTerm)}</span>
+                        <span class="text-sm text-gray-500 ml-2">${getCategoryIcon(product.category)} ${getCategoryName(product.category)}</span>
+                    </div>
+                    <span class="text-yellow-600 font-semibold">R$ ${product.price.toFixed(2)}</span>
+                </div>
+            `).join('');
+            
+            suggestionsList.classList.remove('hidden');
+        }
+
+        // Função para destacar o termo pesquisado
+        function highlightMatch(text, searchTerm) {
+            if (!searchTerm) return text;
+            
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            return text.replace(regex, '<mark class="bg-yellow-200 px-1 rounded">$1</mark>');
+        }
+
+        // Função para selecionar uma sugestão
+        function selectSuggestion(productName) {
+            const searchInput = document.getElementById('search-input');
+            const suggestionsList = document.getElementById('suggestions-list');
+            
+            // Fechar sugestões imediatamente
+            suggestionsList.classList.add('hidden');
+            
+            // Atualizar campo de busca
+            searchInput.value = productName;
+            
+            // Executar busca
+            searchProducts();
         }
 
         // Função para atualizar quantidade
@@ -1018,6 +1267,8 @@
             const qtyElement = document.getElementById(`qty-${productId}`);
             const priceElement = document.getElementById(`price-${productId}`);
             const product = products.find(p => p.id === productId);
+            
+            if (!qtyElement || !priceElement || !product) return;
             
             // Para AREIA (ID 29) e PEDRA 1 (ID 155), usar incrementos de 0.5
             if (productId === 29 || productId === 155) {
@@ -1083,30 +1334,35 @@
             }
             
             // Animação do botão
-            const button = event.target.closest('button');
-            if (change > 0) {
-                button.classList.add('plus-animation');
-                setTimeout(() => button.classList.remove('plus-animation'), 300);
-            } else if (change < 0 && parseFloat(qtyElement.textContent) >= 0) {
-                button.classList.add('minus-animation');
-                setTimeout(() => button.classList.remove('minus-animation'), 300);
+            const button = event.target ? event.target.closest('button') : null;
+            if (button) {
+                if (change > 0) {
+                    button.classList.add('plus-animation');
+                    setTimeout(() => button.classList.remove('plus-animation'), 300);
+                } else if (change < 0 && parseFloat(qtyElement.textContent) >= 0) {
+                    button.classList.add('minus-animation');
+                    setTimeout(() => button.classList.remove('minus-animation'), 300);
+                }
             }
         }
 
         // Função para adicionar ao carrinho
         function addToCart(productId) {
             const qtyElement = document.getElementById(`qty-${productId}`);
+            if (!qtyElement) return;
             
             // Para AREIA e PEDRA 1, usar parseFloat, para outros parseInt
             const quantity = (productId === 29 || productId === 155) ? parseFloat(qtyElement.textContent) : parseInt(qtyElement.textContent);
             
-            // Não permitir adicionar se quantidade for 0
-            if (quantity === 0) {
+            // Não permitir adicionar se quantidade for 0 ou NaN
+            if (quantity === 0 || isNaN(quantity)) {
                 alert('Selecione a quantidade primeiro!');
                 return;
             }
             
             const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
             const existingItem = cart.find(item => item.id === productId);
             
             if (existingItem) {
@@ -1120,17 +1376,21 @@
             
             // Resetar quantidade e preço
             const priceElement = document.getElementById(`price-${productId}`);
-            if (productId === 29 || productId === 155) {
-                qtyElement.textContent = '0.0';
-            } else {
-                qtyElement.textContent = '0';
+            if (priceElement) {
+                if (productId === 29 || productId === 155) {
+                    qtyElement.textContent = '0.0';
+                } else {
+                    qtyElement.textContent = '0';
+                }
+                priceElement.textContent = `R$ ${product.price.toFixed(2)}`;
             }
-            priceElement.textContent = `R$ ${product.price.toFixed(2)}`;
             
             // Animação do botão
             const button = event.target;
-            button.classList.add('add-to-cart-animation');
-            setTimeout(() => button.classList.remove('add-to-cart-animation'), 400);
+            if (button) {
+                button.classList.add('add-to-cart-animation');
+                setTimeout(() => button.classList.remove('add-to-cart-animation'), 400);
+            }
             
             updateCartDisplay();
         }
@@ -1170,6 +1430,8 @@
         // Função para editar quantidade clicando no número
         function editQuantity(productId) {
             const qtyElement = document.getElementById(`qty-${productId}`);
+            if (!qtyElement) return;
+            
             const currentValue = qtyElement.textContent;
             
             // Criar input temporário
@@ -1316,11 +1578,67 @@
             }
         }
 
+        // Função para calcular prazo de entrega (3 dias úteis, excluindo domingos)
+        function calculateDeliveryDate() {
+            const today = new Date();
+            let deliveryDate = new Date(today);
+            let businessDays = 0;
+            
+            // Adicionar dias até completar 3 dias úteis (excluindo domingos)
+            while (businessDays < 3) {
+                deliveryDate.setDate(deliveryDate.getDate() + 1);
+                
+                // Se não for domingo (0), contar como dia útil
+                if (deliveryDate.getDay() !== 0) {
+                    businessDays++;
+                }
+            }
+            
+            return deliveryDate;
+        }
+
+        // Função para formatar data em português
+        function formatDateToPT(date) {
+            const days = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+            const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            
+            const dayName = days[date.getDay()];
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = months[date.getMonth()];
+            
+            return `${dayName}, ${day} de ${month}`;
+        }
+
+        // Função para obter nome do dia da semana atual
+        function getCurrentDayName() {
+            const days = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+            const today = new Date();
+            return days[today.getDay()];
+        }
+
+        // Função para atualizar informações de entrega
+        function updateDeliveryInfo() {
+            const deliveryDate = calculateDeliveryDate();
+            const deliveryDateElement = document.getElementById('delivery-date');
+            const deliveryInfoElement = document.getElementById('delivery-info');
+            
+            if (deliveryDateElement && deliveryInfoElement) {
+                const currentDay = getCurrentDayName();
+                const deliveryDay = formatDateToPT(deliveryDate);
+                
+                deliveryDateElement.textContent = deliveryDay.split(',')[1].trim(); // Só a data
+                deliveryInfoElement.textContent = `Pedido feito na ${currentDay}, entrega até ${deliveryDay.split(',')[0]}`;
+            }
+        }
+
         // Função para exibir itens do carrinho
         function displayCartItems() {
             const cartItems = document.getElementById('cart-items');
             const cashTotal = document.getElementById('cash-total');
             const cardTotal = document.getElementById('card-total');
+            
+            // Atualizar informações de entrega sempre que o carrinho for exibido
+            updateDeliveryInfo();
             
             if (cart.length === 0) {
                 cartItems.innerHTML = `
@@ -1358,26 +1676,29 @@
                 total += itemTotal;
                 
                 return `
-                    <div class="flex items-center justify-between py-4 border-b border-gray-200">
-                        <div class="flex-1">
-                            <h4 class="font-semibold text-gray-800">${item.name}</h4>
-                            <p class="text-sm text-gray-600">R$ ${unitPrice.toFixed(2)} ${item.id === 29 ? (item.quantity === 0.5 ? 'por 0.5m³' : 'por m³') : 'cada'}</p>
+                    <div class="bg-white rounded-lg p-3 border border-gray-200 shadow-sm">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-gray-800 text-sm leading-tight">${item.name}</h4>
+                                <p class="text-xs text-gray-600 mt-1">R$ ${unitPrice.toFixed(2)} ${item.id === 29 ? (item.quantity === 0.5 ? 'por 0.5m³' : 'por m³') : 'cada'}</p>
+                            </div>
+                            <button onclick="removeFromCart(${item.id})" class="text-red-500 hover:text-red-700 text-xs ml-2">
+                                ✕
+                            </button>
                         </div>
-                        <div class="flex items-center space-x-3">
+                        
+                        <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-2">
-                                <button onclick="changeCartQuantity(${item.id}, -1)" class="w-8 h-8 rounded-full bg-gray-200 hover:bg-red-200 flex items-center justify-center text-gray-600 hover:text-red-600">
-                                    <span class="text-sm font-bold">−</span>
+                                <button onclick="changeCartQuantity(${item.id}, -1)" class="w-6 h-6 rounded-full bg-gray-200 hover:bg-red-200 flex items-center justify-center text-gray-600 hover:text-red-600 text-xs">
+                                    −
                                 </button>
-                                <span class="w-12 text-center font-semibold">${quantityDisplay}</span>
-                                <button onclick="changeCartQuantity(${item.id}, 1)" class="w-8 h-8 rounded-full bg-gray-200 hover:bg-green-200 flex items-center justify-center text-gray-600 hover:text-green-600">
-                                    <span class="text-sm font-bold">+</span>
+                                <span class="w-10 text-center font-semibold text-sm">${quantityDisplay}</span>
+                                <button onclick="changeCartQuantity(${item.id}, 1)" class="w-6 h-6 rounded-full bg-gray-200 hover:bg-green-200 flex items-center justify-center text-gray-600 hover:text-green-600 text-xs">
+                                    +
                                 </button>
                             </div>
                             <div class="text-right">
-                                <p class="font-bold text-yellow-600">R$ ${itemTotal.toFixed(2)}</p>
-                                <button onclick="removeFromCart(${item.id})" class="text-xs text-red-500 hover:text-red-700">
-                                    Remover
-                                </button>
+                                <p class="font-bold text-yellow-600 text-sm">R$ ${itemTotal.toFixed(2)}</p>
                             </div>
                         </div>
                     </div>
@@ -1395,36 +1716,36 @@
         // Função para alterar quantidade no carrinho
         function changeCartQuantity(productId, change) {
             const item = cart.find(item => item.id === productId);
-            if (item) {
-                // Para AREIA (ID 29) e PEDRA 1 (ID 155), usar incrementos de 0.5
-                if (productId === 29 || productId === 155) {
-                    item.quantity += (change * 0.5);
-                    item.quantity = Math.max(0, item.quantity);
-                } else if (productId === 752 || productId === 753) {
-                    // Para TIJOLO MILHEIRO, lógica especial no carrinho
-                    if (change > 0) {
-                        if (item.quantity === 0) {
-                            item.quantity = 1000;
-                        } else {
-                            item.quantity += 1;
-                        }
+            if (!item) return;
+            
+            // Para AREIA (ID 29) e PEDRA 1 (ID 155), usar incrementos de 0.5
+            if (productId === 29 || productId === 155) {
+                item.quantity += (change * 0.5);
+                item.quantity = Math.max(0, item.quantity);
+            } else if (productId === 752 || productId === 753) {
+                // Para TIJOLO MILHEIRO, lógica especial no carrinho
+                if (change > 0) {
+                    if (item.quantity === 0) {
+                        item.quantity = 1000;
                     } else {
-                        if (item.quantity <= 1000) {
-                            item.quantity = 0;
-                        } else {
-                            item.quantity -= 1;
-                        }
+                        item.quantity += 1;
                     }
                 } else {
-                    item.quantity += change;
+                    if (item.quantity <= 1000) {
+                        item.quantity = 0;
+                    } else {
+                        item.quantity -= 1;
+                    }
                 }
-                
-                if (item.quantity <= 0) {
-                    removeFromCart(productId);
-                } else {
-                    displayCartItems();
-                    updateCartDisplay();
-                }
+            } else {
+                item.quantity += change;
+            }
+            
+            if (item.quantity <= 0) {
+                removeFromCart(productId);
+            } else {
+                displayCartItems();
+                updateCartDisplay();
             }
         }
 
@@ -1446,10 +1767,682 @@
             }
         }
 
+        // Função para obter sugestões da IA
+        async function getSuggestions(searchTerm) {
+            const aiSuggestions = document.getElementById('ai-suggestions');
+            const aiContent = document.getElementById('ai-suggestions-content');
+            
+            // Mostrar painel de sugestões
+            aiSuggestions.classList.remove('hidden');
+            
+            // Mostrar loading
+            aiContent.innerHTML = `
+                <div class="flex items-center justify-center py-8">
+                    <div class="animate-spin rounded-full h-8 w-8 border-2 border-blue-500 border-t-transparent mr-3"></div>
+                    <span class="text-blue-600">Analisando sua busca...</span>
+                </div>
+            `;
+            
+            // Simular delay da IA (você pode substituir por uma chamada real à API)
+            setTimeout(() => {
+                const suggestions = generateAISuggestions(searchTerm);
+                displayAISuggestions(suggestions);
+            }, 2000);
+        }
+
+        // Sistema de IA Inteligente - Aprende automaticamente dos produtos
+        class SmartAI {
+            constructor() {
+                this.productDatabase = products;
+                this.synonyms = this.buildSynonymDatabase();
+                this.corrections = this.buildCorrectionDatabase();
+                this.categoryKeywords = this.buildCategoryKeywords();
+            }
+            
+            // Constrói base de sinônimos automaticamente dos produtos
+            buildSynonymDatabase() {
+                const synonyms = new Map();
+                
+                // Sinônimos básicos de construção
+                const baseSynonyms = {
+                    'cimento': ['cp', 'cp2', 'cp3', 'portland', 'massa', 'ligante'],
+                    'areia': ['areao', 'areião', 'arisco'],
+                    'pedra': ['brita', 'agregado', 'cascalho', 'pedrisco'],
+                    'tijolo': ['bloco', 'ceramico', 'cerâmico', 'alvenaria'],
+                    'ferro': ['aco', 'aço', 'vergalhao', 'vergalhão', 'barra'],
+                    'tubo': ['cano', 'tubulacao', 'tubulação', 'encanamento'],
+                    'conexao': ['conexões', 'pecas', 'peças', 'acessorios', 'acessórios'],
+                    'eletrico': ['elétrico', 'eletrica', 'elétrica', 'energia', 'luz'],
+                    'pintura': ['tinta', 'verniz', 'esmalte', 'latex', 'látex'],
+                    'agua': ['água', 'hidraulico', 'hidráulico', 'encanamento']
+                };
+                
+                // Adicionar sinônimos base
+                for (const [main, syns] of Object.entries(baseSynonyms)) {
+                    synonyms.set(main, syns);
+                    syns.forEach(syn => synonyms.set(syn, [main, ...syns.filter(s => s !== syn)]));
+                }
+                
+                // Extrair palavras-chave dos nomes dos produtos automaticamente
+                this.productDatabase.forEach(product => {
+                    const words = product.name.toLowerCase()
+                        .split(/[\s\-\/\*]+/)
+                        .filter(word => word.length > 2);
+                    
+                    words.forEach(word => {
+                        if (!synonyms.has(word)) {
+                            synonyms.set(word, []);
+                        }
+                        
+                        // Adicionar produto como contexto para a palavra
+                        if (!synonyms.get(word).includes(product.name)) {
+                            synonyms.get(word).push(product.name);
+                        }
+                    });
+                });
+                
+                return synonyms;
+            }
+            
+            // Constrói correções ortográficas automaticamente
+            buildCorrectionDatabase() {
+                const corrections = {
+                    // Correções manuais comuns
+                    'simento': 'cimento', 'simeto': 'cimento', 'cemento': 'cimento',
+                    'areai': 'areia', 'areia': 'areia',
+                    'tijlo': 'tijolo', 'tijulo': 'tijolo',
+                    'fero': 'ferro', 'feero': 'ferro',
+                    'tubos': 'tubo', 'tubao': 'tubo',
+                    'conexao': 'conexão', 'conexoes': 'conexões',
+                    'eletrica': 'elétrica', 'eletrico': 'elétrico',
+                    'tinta': 'pintura', 'verniz': 'pintura'
+                };
+                
+                // Adicionar correções baseadas nos produtos existentes
+                this.productDatabase.forEach(product => {
+                    const words = product.name.toLowerCase().split(/[\s\-\/\*]+/);
+                    words.forEach(word => {
+                        if (word.length > 3) {
+                            // Gerar variações comuns de erro
+                            const variations = this.generateTypoVariations(word);
+                            variations.forEach(variation => {
+                                if (!corrections[variation]) {
+                                    corrections[variation] = word;
+                                }
+                            });
+                        }
+                    });
+                });
+                
+                return corrections;
+            }
+            
+            // Gera variações comuns de erro ortográfico
+            generateTypoVariations(word) {
+                const variations = [];
+                
+                // Troca de letras comuns
+                const commonSwaps = {
+                    'ç': 'c', 'ã': 'a', 'õ': 'o', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u',
+                    'ss': 's', 'rr': 'r', 'mm': 'm', 'nn': 'n'
+                };
+                
+                for (const [from, to] of Object.entries(commonSwaps)) {
+                    if (word.includes(from)) {
+                        variations.push(word.replace(new RegExp(from, 'g'), to));
+                    }
+                }
+                
+                return variations;
+            }
+            
+            // Constrói palavras-chave por categoria automaticamente
+            buildCategoryKeywords() {
+                const categoryKeywords = {};
+                
+                this.productDatabase.forEach(product => {
+                    if (!categoryKeywords[product.category]) {
+                        categoryKeywords[product.category] = new Set();
+                    }
+                    
+                    const words = product.name.toLowerCase()
+                        .split(/[\s\-\/\*]+/)
+                        .filter(word => word.length > 2);
+                    
+                    words.forEach(word => {
+                        categoryKeywords[product.category].add(word);
+                    });
+                });
+                
+                // Converter Sets para Arrays
+                Object.keys(categoryKeywords).forEach(category => {
+                    categoryKeywords[category] = Array.from(categoryKeywords[category]);
+                });
+                
+                return categoryKeywords;
+            }
+            
+            // Função principal para gerar sugestões inteligentes
+            generateSuggestions(searchTerm) {
+                const term = searchTerm.toLowerCase().trim();
+                const suggestions = [];
+                
+                if (!term) return suggestions;
+                
+                // 1. Verificar correções ortográficas
+                const correction = this.findCorrection(term);
+                if (correction) {
+                    suggestions.push({
+                        type: 'correction',
+                        text: `Você quis dizer "${correction}"?`,
+                        action: () => searchForTerm(correction),
+                        priority: 10
+                    });
+                }
+                
+                // 2. Buscar produtos relacionados por sinônimos
+                const relatedProducts = this.findRelatedProducts(term);
+                relatedProducts.forEach(product => {
+                    suggestions.push({
+                        type: 'product',
+                        text: `Produto encontrado: ${product.name}`,
+                        action: () => searchForTerm(product.name),
+                        priority: 8,
+                        product: product
+                    });
+                });
+                
+                // 3. Sugerir categorias relacionadas
+                const relatedCategories = this.findRelatedCategories(term);
+                relatedCategories.forEach(category => {
+                    const categoryName = this.getCategoryDisplayName(category);
+                    suggestions.push({
+                        type: 'category',
+                        text: `Ver todos os produtos de ${categoryName}`,
+                        action: () => filterCategory(category),
+                        priority: 6
+                    });
+                });
+                
+                // 4. Buscar produtos similares por contexto
+                const similarProducts = this.findSimilarProducts(term);
+                similarProducts.forEach(product => {
+                    suggestions.push({
+                        type: 'similar',
+                        text: `Produto similar: ${product.name} - R$ ${product.price.toFixed(2)}`,
+                        action: () => searchForTerm(product.name),
+                        priority: 5,
+                        product: product
+                    });
+                });
+                
+                // 5. Sugestões contextuais inteligentes
+                const contextualSuggestions = this.generateContextualSuggestions(term);
+                suggestions.push(...contextualSuggestions);
+                
+                // Ordenar por prioridade e remover duplicatas
+                return this.prioritizeAndClean(suggestions).slice(0, 6);
+            }
+            
+            findCorrection(term) {
+                // Busca exata
+                if (this.corrections[term]) {
+                    return this.corrections[term];
+                }
+                
+                // Busca por similaridade (Levenshtein distance)
+                let bestMatch = null;
+                let bestDistance = Infinity;
+                
+                Object.keys(this.corrections).forEach(key => {
+                    const distance = this.levenshteinDistance(term, key);
+                    if (distance < bestDistance && distance <= 2) {
+                        bestDistance = distance;
+                        bestMatch = this.corrections[key];
+                    }
+                });
+                
+                return bestMatch;
+            }
+            
+            findRelatedProducts(term) {
+                const related = [];
+                
+                // Busca direta nos sinônimos
+                if (this.synonyms.has(term)) {
+                    const synonymList = this.synonyms.get(term);
+                    synonymList.forEach(synonym => {
+                        const products = this.productDatabase.filter(p => 
+                            p.name.toLowerCase().includes(synonym.toLowerCase())
+                        );
+                        related.push(...products);
+                    });
+                }
+                
+                // Busca por palavras parciais
+                this.productDatabase.forEach(product => {
+                    const productWords = product.name.toLowerCase().split(/[\s\-\/\*]+/);
+                    if (productWords.some(word => word.includes(term) || term.includes(word))) {
+                        related.push(product);
+                    }
+                });
+                
+                return [...new Set(related)]; // Remove duplicatas
+            }
+            
+            findRelatedCategories(term) {
+                const related = [];
+                
+                Object.keys(this.categoryKeywords).forEach(category => {
+                    const keywords = this.categoryKeywords[category];
+                    if (keywords.some(keyword => 
+                        keyword.includes(term) || 
+                        term.includes(keyword) ||
+                        (this.synonyms.has(term) && this.synonyms.get(term).includes(keyword))
+                    )) {
+                        related.push(category);
+                    }
+                });
+                
+                return related;
+            }
+            
+            findSimilarProducts(term) {
+                const similar = [];
+                const termWords = term.split(/[\s\-\/\*]+/);
+                
+                this.productDatabase.forEach(product => {
+                    const productWords = product.name.toLowerCase().split(/[\s\-\/\*]+/);
+                    const commonWords = termWords.filter(word => 
+                        productWords.some(pWord => pWord.includes(word) || word.includes(pWord))
+                    );
+                    
+                    if (commonWords.length > 0) {
+                        similar.push({
+                            ...product,
+                            similarity: commonWords.length / Math.max(termWords.length, productWords.length)
+                        });
+                    }
+                });
+                
+                return similar
+                    .sort((a, b) => b.similarity - a.similarity)
+                    .slice(0, 3);
+            }
+            
+            generateContextualSuggestions(term) {
+                const suggestions = [];
+                
+                // Sugestões baseadas no contexto da construção
+                const constructionContext = {
+                    'fundacao': ['cimento', 'areia', 'pedra', 'ferro'],
+                    'alvenaria': ['tijolo', 'bloco', 'argamassa', 'cimento'],
+                    'cobertura': ['telha', 'madeira', 'prego', 'parafuso'],
+                    'acabamento': ['tinta', 'massa', 'lixa', 'pincel'],
+                    'hidraulica': ['tubo', 'conexao', 'registro', 'boia'],
+                    'eletrica': ['fio', 'cabo', 'benjamin', 'bocal']
+                };
+                
+                Object.keys(constructionContext).forEach(context => {
+                    if (constructionContext[context].some(keyword => 
+                        term.includes(keyword) || keyword.includes(term)
+                    )) {
+                        suggestions.push({
+                            type: 'contextual',
+                            text: `Produtos para ${context}: ${constructionContext[context].join(', ')}`,
+                            action: () => this.searchMultipleTerms(constructionContext[context]),
+                            priority: 4
+                        });
+                    }
+                });
+                
+                return suggestions;
+            }
+            
+            searchMultipleTerms(terms) {
+                const searchInput = document.getElementById('search-input');
+                searchInput.value = terms[0];
+                searchProducts();
+            }
+            
+            getCategoryDisplayName(category) {
+                const names = {
+                    'alvenaria': 'Alvenaria',
+                    'tubos': 'Tubos e Conexões',
+                    'eletrica': 'Material Elétrico',
+                    'pintura': 'Pintura',
+                    'outros': 'Outros'
+                };
+                return names[category] || category;
+            }
+            
+            prioritizeAndClean(suggestions) {
+                // Remover duplicatas baseado no texto
+                const unique = suggestions.filter((suggestion, index, self) => 
+                    index === self.findIndex(s => s.text === suggestion.text)
+                );
+                
+                // Ordenar por prioridade
+                return unique.sort((a, b) => (b.priority || 0) - (a.priority || 0));
+            }
+            
+            levenshteinDistance(str1, str2) {
+                const matrix = [];
+                
+                for (let i = 0; i <= str2.length; i++) {
+                    matrix[i] = [i];
+                }
+                
+                for (let j = 0; j <= str1.length; j++) {
+                    matrix[0][j] = j;
+                }
+                
+                for (let i = 1; i <= str2.length; i++) {
+                    for (let j = 1; j <= str1.length; j++) {
+                        if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+                            matrix[i][j] = matrix[i - 1][j - 1];
+                        } else {
+                            matrix[i][j] = Math.min(
+                                matrix[i - 1][j - 1] + 1,
+                                matrix[i][j - 1] + 1,
+                                matrix[i - 1][j] + 1
+                            );
+                        }
+                    }
+                }
+                
+                return matrix[str2.length][str1.length];
+            }
+        }
+        
+        // Instanciar o sistema de IA
+        const smartAI = new SmartAI();
+        
+        // Função para gerar sugestões baseadas no termo de busca
+        function generateAISuggestions(searchTerm) {
+            return smartAI.generateSuggestions(searchTerm);
+        }
+
+        // Função para exibir sugestões da IA
+        function displayAISuggestions(suggestions) {
+            const aiContent = document.getElementById('ai-suggestions-content');
+            
+            const icons = {
+                'correction': '✏️',
+                'category': '📂',
+                'product': '📦',
+                'general': '💡'
+            };
+            
+            aiContent.innerHTML = suggestions.map(suggestion => `
+                <div class="bg-white rounded-lg p-4 border border-blue-200 hover:border-blue-400 cursor-pointer transition-all hover:shadow-md" onclick="applySuggestion(${suggestions.indexOf(suggestion)})">
+                    <div class="flex items-center">
+                        <span class="text-xl mr-3">${icons[suggestion.type]}</span>
+                        <span class="text-gray-800 font-medium">${suggestion.text}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Armazenar sugestões para uso posterior
+            window.currentSuggestions = suggestions;
+        }
+
+        // Função para aplicar sugestão
+        function applySuggestion(index) {
+            const suggestion = window.currentSuggestions[index];
+            if (suggestion && suggestion.action) {
+                suggestion.action();
+                
+                // Esconder painel de sugestões
+                const aiSuggestions = document.getElementById('ai-suggestions');
+                aiSuggestions.classList.add('hidden');
+            }
+        }
+
+        // Função para buscar por termo específico
+        function searchForTerm(term) {
+            const searchInput = document.getElementById('search-input');
+            searchInput.value = term;
+            searchProducts();
+        }
+
+        // Função para limpar busca
+        function clearSearch() {
+            const searchInput = document.getElementById('search-input');
+            searchInput.value = '';
+            filterCategory('todos');
+        }
+
+        // Função para detectar se é dispositivo móvel
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                   (navigator.maxTouchPoints && navigator.maxTouchPoints > 2 && /MacIntel/.test(navigator.platform));
+        }
+
+        // Função para salvar orçamento como imagem
+        async function saveQuote() {
+            if (cart.length === 0) {
+                alert('Seu carrinho está vazio!');
+                return;
+            }
+
+            // Criar canvas para o orçamento
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Configurar tamanho do canvas (A4 proporção)
+            canvas.width = 800;
+            canvas.height = 1000;
+            
+            // Fundo branco
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Configurações de fonte
+            ctx.fillStyle = '#000000';
+            ctx.textAlign = 'left';
+            
+            let y = 40;
+            
+            // Cabeçalho com logo (simulado com texto)
+            ctx.font = 'bold 24px Arial';
+            ctx.fillStyle = '#1f2937';
+            ctx.fillText('🏗️ Casa Da Construção', 50, y);
+            y += 30;
+            
+            ctx.font = 'bold 20px Arial';
+            ctx.fillStyle = '#374151';
+            ctx.fillText('João e Lêa Lajes Fortes', 50, y);
+            y += 50;
+            
+            // Título do orçamento
+            ctx.font = 'bold 28px Arial';
+            ctx.fillStyle = '#dc2626';
+            ctx.fillText('ORÇAMENTO', 50, y);
+            y += 40;
+            
+            // Data
+            const today = new Date();
+            ctx.font = '16px Arial';
+            ctx.fillStyle = '#6b7280';
+            ctx.fillText(`Data: ${today.toLocaleDateString('pt-BR')}`, 50, y);
+            y += 40;
+            
+            // Linha separadora
+            ctx.strokeStyle = '#e5e7eb';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(50, y);
+            ctx.lineTo(750, y);
+            ctx.stroke();
+            y += 30;
+            
+            // Cabeçalho da tabela
+            ctx.font = 'bold 16px Arial';
+            ctx.fillStyle = '#374151';
+            ctx.fillText('PRODUTO', 50, y);
+            ctx.fillText('QTD', 400, y);
+            ctx.fillText('VALOR UNIT.', 500, y);
+            ctx.fillText('TOTAL', 650, y);
+            y += 25;
+            
+            // Linha separadora
+            ctx.strokeStyle = '#d1d5db';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(50, y);
+            ctx.lineTo(750, y);
+            ctx.stroke();
+            y += 20;
+            
+            // Itens do carrinho
+            ctx.font = '14px Arial';
+            ctx.fillStyle = '#000000';
+            let total = 0;
+            
+            cart.forEach(item => {
+                let itemTotal;
+                let unitPrice;
+                let quantityDisplay;
+                
+                // Cálculo especial para AREIA
+                if (item.id === 29) {
+                    itemTotal = calculateSandPrice(item.quantity);
+                    unitPrice = item.quantity === 0.5 ? 75.00 : 135.00;
+                    quantityDisplay = item.quantity.toFixed(1);
+                } else if (item.id === 155) {
+                    itemTotal = item.price * item.quantity;
+                    unitPrice = item.price;
+                    quantityDisplay = item.quantity.toFixed(1);
+                } else {
+                    itemTotal = item.price * item.quantity;
+                    unitPrice = item.price;
+                    quantityDisplay = item.quantity;
+                }
+                
+                total += itemTotal;
+                
+                // Nome do produto (quebrar linha se muito longo)
+                const productName = item.name.length > 35 ? item.name.substring(0, 35) + '...' : item.name;
+                ctx.fillText(productName, 50, y);
+                ctx.fillText(quantityDisplay, 400, y);
+                ctx.fillText(`R$ ${unitPrice.toFixed(2)}`, 500, y);
+                ctx.fillText(`R$ ${itemTotal.toFixed(2)}`, 650, y);
+                y += 25;
+            });
+            
+            // Linha separadora antes dos totais
+            y += 10;
+            ctx.strokeStyle = '#d1d5db';
+            ctx.beginPath();
+            ctx.moveTo(50, y);
+            ctx.lineTo(750, y);
+            ctx.stroke();
+            y += 30;
+            
+            // Totais por forma de pagamento
+            const cashPrice = total;
+            const cardPrice = total * 1.16;
+            
+            ctx.font = 'bold 18px Arial';
+            ctx.fillStyle = '#059669';
+            ctx.fillText('💵 À Vista (Dinheiro/Débito/PIX):', 50, y);
+            ctx.fillText(`R$ ${cashPrice.toFixed(2)}`, 650, y);
+            y += 30;
+            
+            ctx.fillStyle = '#2563eb';
+            ctx.fillText('💳 Cartão (até 10x sem juros):', 50, y);
+            ctx.fillText(`R$ ${cardPrice.toFixed(2)}`, 650, y);
+            y += 50;
+            
+            // Espaço extra removido do prazo de entrega
+            y += 20;
+            
+            // Rodapé
+            ctx.font = '12px Arial';
+            ctx.fillStyle = '#6b7280';
+            ctx.fillText('Este orçamento tem validade de 7 dias.', 50, y);
+            y += 20;
+            ctx.fillText('Casa Da Construção João e Lêa Lajes Fortes', 50, y);
+            y += 15;
+            ctx.fillText('Materiais de Construção de Qualidade', 50, y);
+            
+            // Converter canvas para blob
+            canvas.toBlob(function(blob) {
+                const fileName = `Orcamento_${today.toLocaleDateString('pt-BR').replace(/\//g, '-')}.png`;
+                
+                // Detectar se é dispositivo móvel
+                if (isMobileDevice()) {
+                    // Para celular: usar Web Share API se disponível, senão abrir em nova aba
+                    if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], fileName, { type: 'image/png' })] })) {
+                        const file = new File([blob], fileName, { type: 'image/png' });
+                        navigator.share({
+                            title: 'Orçamento - Casa Da Construção',
+                            text: 'Orçamento gerado pelo catálogo virtual',
+                            files: [file]
+                        }).then(() => {
+                            alert('📱 Orçamento compartilhado com sucesso!\nVocê pode salvar na galeria ou enviar para contatos.');
+                        }).catch((error) => {
+                            console.log('Erro ao compartilhar:', error);
+                            // Fallback: abrir em nova aba
+                            openImageInNewTab(blob, fileName);
+                        });
+                    } else {
+                        // Fallback: abrir em nova aba para salvar manualmente
+                        openImageInNewTab(blob, fileName);
+                    }
+                } else {
+                    // Para computador: fazer download direto
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    alert('💻 Orçamento baixado com sucesso!\nO arquivo foi salvo na pasta de Downloads.');
+                }
+            }, 'image/png');
+        }
+
+        // Função para abrir imagem em nova aba (fallback para celular)
+        function openImageInNewTab(blob, fileName) {
+            const url = URL.createObjectURL(blob);
+            const newWindow = window.open(url, '_blank');
+            
+            if (newWindow) {
+                // Adicionar instruções na nova aba
+                newWindow.document.title = fileName;
+                alert('📱 Orçamento aberto em nova aba!\n\nPara salvar no celular:\n• Toque e segure na imagem\n• Selecione "Salvar imagem" ou "Baixar"\n• A imagem será salva na galeria');
+            } else {
+                alert('❌ Não foi possível abrir o orçamento.\nVerifique se o bloqueador de pop-ups está desabilitado.');
+            }
+            
+            // Limpar URL após um tempo
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 60000);
+        }
+
+
+
         // Inicializar a página
         document.addEventListener('DOMContentLoaded', function() {
             displayProducts(products);
+            
+            // Adicionar evento para fechar sugestões ao clicar fora
+            document.addEventListener('click', function(event) {
+                const searchInput = document.getElementById('search-input');
+                const suggestionsList = document.getElementById('suggestions-list');
+                
+                // Se o clique não foi no input de busca nem nas sugestões, fechar
+                if (!searchInput.contains(event.target) && !suggestionsList.contains(event.target)) {
+                    suggestionsList.classList.add('hidden');
+                }
+            });
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98867b3383476493',t:'MTc1OTQzMjAzOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'988dc45be6908461',t:'MTc1OTUwODQyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
